@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base Converter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Base Converter</h1>
+
+  <!-- input angkanya -->
+  <label for="input-number">Enter number:</label>
+  <input type="text" id="input-number" placeholder="Enter a number...">
+
+  <!-- dropdown pilih base numbernya -->
+  <label for="from-base">From Base:</label>
+  <select id="from-base"></select>
+
+  <label for="to-base">To Base:</label>
+  <select id="to-base"></select>
+
+  <!-- tombol2 utk convert, swap, reset-->
+  <div class="buttons">
+    <button onclick="convert()">= Convert</button>
+    <button onclick="reset()">× Reset</button>
+    <button onclick="swapBases()">⇄ Swap</button>
+  </div>
+
+  <!-- hasilnya -->
+  <label>Result number:</label>
+  <input type="text" id="result-number" readonly>
+
+  <button onclick="copyResult()">Copy</button>
+
+  <script src="index.js"></script>
+</body>
+</html>

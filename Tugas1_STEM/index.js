@@ -6,44 +6,6 @@ const resultNumber = document.getElementById('result-number');
 
 const digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-// untuk option dropdown from base & to base
-function baseOptions() {
-  // kosongkan dulu
-  fromBase.innerHTML = '';
-  toBase.innerHTML = '';
-  
-  // loop dari base 2 sampai base 36
-  for (let i = 2; i <= 36; i++) {
-
-    // bikin elemen <option> (elemen bawaan yang biasa dipakai dalam <select>) untuk dropdown from base
-    const fromOption = document.createElement('option');   
-    fromOption.value = i;                               // value = basenya                      
-    fromOption.textContent = baseLabel(i);              // teks yg ditampilkan ke user di dropdown (kayak: 2 (binary))              
-    fromBase.appendChild(fromOption);                   // tambahkan ke dalam <select>                 
-    
-    // bikin elemen <option> untuk dropdown to base
-    const toOption = document.createElement('option');
-    toOption.value = i;
-    toOption.textContent = baseLabel(i);
-    toBase.appendChild(toOption);
-  }
-    
-    // default
-    fromBase.value = '10'; 
-    toBase.value = '16';   
-}
-
-// tambahin label (binary), (octal), (Decimal), (hex) ke drop down
-function baseLabel(base) {
-    switch(base) {
-        case 2: return '2 (binary)';    
-        case 8: return '8 (octal)';     
-        case 10: return '10 (decimal)'; 
-        case 16: return '16 (hex)';    
-        default: return base.toString(); 
-    }
-}
-
 // fungsi konversi yg utama
 function convert() {
  

@@ -53,13 +53,49 @@ function convert() {
 }
 
 function reset() {
+  // kosongkan input dan hasil
+  inputNumber.value = '';
+  resultNumber.value = '';
   
+  // hapus class "invalid" jika ada
+  inputNumber.classList.remove("invalid");
+
+  // kembalikan dropdown ke default
+  fromBase.value = '10';
+  toBase.value = '16';
 }
 
 function swapBases() {
+  // simpan nilai fromBase sementara
+  const tempBase = fromBase.value;
+
+  // tukar nilai dropdown
+  fromBase.value = toBase.value;
+  toBase.value = tempBase;
+
+  // ambil nilai dari hasil
+  const resultValue = resultNumber.value;
   
+  // jika ada hasil, pindahkan ke input dan langsung konversi lagi
+  if (resultValue) {
+    inputNumber.value = resultValue;
+    convert();
+  }
 }
 
 function copyResult() {
-  
+  const resultText = resultNumber.value;
+
+  // pastikan ada teks di dalam kolom hasil sebelum menyalin
+  if (resultText) {
+    navigator.clipboard.writeText(resultText)
+      .then(() => {
+        // opsional: berikan notifikasi kalau berhasil
+        alert('Hasil berhasil disalin ke clipboard!');
+      })
+      .catch(err => {
+        // opsional: tangani jika terjadi error
+        console.error('Gagal menyalin: ', err);
+      });
+  }
 }

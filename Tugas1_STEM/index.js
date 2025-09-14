@@ -11,7 +11,7 @@ function validateInput(inputValue, sourceBase) {
   // kalau input kosong 
   if (inputValue === '') {
     inputNumber.classList.add("invalid");
-    return;
+    return false;
   }
   
   // loop setiap karakter di input (kiri ke kanan)
@@ -22,9 +22,11 @@ function validateInput(inputValue, sourceBase) {
       // kalo digit ga ketemu (-1) atau lebih besar dari base yg dipilih
       if (digit === -1 || digit >= sourceBase) {
           inputNumber.classList.add("invalid");
-          return;
+          return false;
       }
   }
+
+  return true; // input valid
 }
 
 // function konversi utama

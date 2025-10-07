@@ -287,3 +287,162 @@ function deleteStory(id) {
   }
 }
 
+// FUNCTION FAVORITE
+// buat tambahin atau hapus cerita dari daftar favorit
+function favorite(id) {
+  if (favorites.includes(id)) favorites = favorites.filter(f => f !== id); // kalau id udah ada di array favorites, hapus idnya
+  else favorites.push(id);                                                 // kalau belum ada, tambahin id cerita ke array favorites
+
+  localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan data cerita favorit ke localStorage biar gak ilang pas refresh
+}
+
+// FUNCTION BOOKMARK
+// buat tambahin atau hapus cerita dari daftar disimpan (bookmark)
+function bookmark(id) {
+
+  // bikin array baru yang isinya semua elemen kecuali yang id-nya sama dengan yang diklik.
+  if (bookmarks.includes(id)) bookmarks = bookmarks.filter(b => b !== id); 
+  // kalau belum ada, tambahin id cerita ke array bookmarks
+  else bookmarks.push(id);                                                 
+
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); // simpan data bookmark ke localStorage biar gak ilang pas refresh
+}
+
+// FUNCTION MARKASREAD
+// buat tandain kalo cerita udah dibaca
+function markAsRead(id) {
+  // cari cerita yang idnya sama dengan id yang dikirim
+  const story = stories.find(s => s.id === id); 
+  
+  // kalau ceritanya ketemu
+  if (story) {
+    story.dibaca = true;                                       // tandai sudah dibaca
+    alert(`Cerita "${story.judul}" ditandai sudah dibaca :D`); // kasih alert ke user
+  }
+}
+
+// FUNCTION ADDNOTE
+// buat tambahin catatan pribadi
+function addNote(id, isiCatatan) {
+    
+  notes[id] = isiCatatan; // simpan catatan di object notes dengan key = id cerita
+  localStorage.setItem("notes", JSON.stringify(notes)); // update localStorage biar catatan gak hilang pas refresh
+}
+
+// CATATAN PRIBADI (HALAMAN KHUSUS)
+function renderNotes() {
+
+  // ambil elemen HTML yang punya id="ceritaContainer"
+  const container = document.getElementById("ceritaContainer");
+  
+  // ganti isi container mjd judul catatan
+  container.innerHTML = "<h2>Catatan</h2>";                 
+
+  // kalo belum ada catatan yang disimpan
+  if (Object.keys(notes).length === 0) {
+    container.innerHTML += "<p>Tidak ada catatan.</p>";
+    return; // keluar dari fungsi
+  }
+
+  // tampilkan semua catatan yang ada
+  // looping untuk semua catatan yang tersimpan
+  Object.keys(notes).forEach(id => {
+    const story = stories.find(s => s.id == id); // cari cerita dari array stories yang idnya sama dengan id catatan
+    const div = document.createElement("div");   // buat elemen card baru
+    div.classList.add("cerita-card");            // kasih class CSS
+
+    // masukkan isi HTML ke dalam div
+    div.innerHTML = `
+      <!-- headernya kalau cerita udah dihapus -->
+      <h3>${story ? story.judul : "(Cerita sudah dihapus)"}</h3>
+      <!-- tempat tulis catatan -->
+      <textarea rows="4" onchange="addNote(${id}, this.value)">${notes[id]}</textarea>
+    `;
+    container.appendChild(div); // tambahkan card ke halaman
+  });
+}
+
+// FUNCTION SHOWSTATS
+// untuk menunjukkan statistik 
+function showStats() {
+  // data-data statistiknya
+  const total = stories.length; 
+  const fav = favorites.length; 
+  const saved = bookmarks.length;
+  const read = stories.filter(s => s.dibaca).length;
+
+  // ambil elemen utama tempat isi halaman
+  const container = document.getElementById("ceritaContainer");
+
+  // tampilkan datanya
+  container.innerHTML = `
+    <h2>Statistik Bacaan</h2>
+    <p>Total Cerita: <strong>${total}</strong></p>
+    <p>Favorit: <strong>${fav}</strong></p>
+    <p>Disimpan: <strong>${saved}</strong></p>
+    <p>Sudah Dibaca: <strong>${read}</strong></p>
+  `;
+}
+
+// RECYCLE BIN
+function showRecycleBin() {
+
+  // smbil elemen utama tempat semua isi halaman ditampilkan
+  const container = document.getElementById("ceritaContainer");
+
+  // ubah judul/headernya jadi Recycle Bin 
+  container.innerHTML = "<h2>Recycle Bin</h2>";
+
+  // kalau array deletedStories kosong berarti belum ada cerita yang dihapus
+  if (deletedStories.length === 0) {
+    container.innerHTML += "<p>Tidak ada cerita.</p>";
+    return;
+  }
+
+  // loop setiap cerita di array deletedStories
+  deletedStories.forEach(story => {
+    const card = document.createElement("article"); // buat elemen HTML baru (<article>)
+    card.classList.add("cerita-card");              // kasih class cerita-card
+    
+    // isi cardnya
+    card.innerHTML = `
+      <img src="${story.gambar}" alt="${story.judul}">
+      <h3>${story.judul}</h3>
+      <p><strong>Daerah:</strong> ${story.daerah}</p>
+      <div class="card-buttons">
+        <button onclick="restoreStory(${story.id})">Pulihkan</button>
+        <button onclick="deleteForever(${story.id})">Hapus Permanen</button>
+      </div>
+    `;
+
+    // tambahkan card ke halaman
+    container.appendChild(card);
+  });
+}
+
+// FUNCTION RESTORESTORY
+// buat restore cerita yang di recycle bin
+function restoreStory(id) {
+  const story = deletedStories.find(s => s.id === id); // cari cerita berdasarkan id
+  
+  // kalau ketemu
+  if (story) {
+    stories.push(story);                                                    // tambahin lagi ceritanya ke halaman utama
+    deletedStories = deletedStories.filter(s => s.id !== id);               // hapus dari recycle bin
+    localStorage.setItem("deletedStories", JSON.stringify(deletedStories)); // update localStorage
+    renderStories(stories);                                                 // render ulang daftar cerita
+    alert(`Cerita "${story.judul}" berhasil dipulihkan!`);                  // kasih alert
+  }
+}
+
+// FUNCTION DELETEFOREVER
+// buat hapus cerita dari recycle bin secara permanen
+function deleteForever(id) {
+  if (confirm("Apakah Anda yakin ingin menghapus cerita ini secara permanen?")) { // dialog konfirmasi
+    deletedStories = deletedStories.filter(s => s.id !== id);                     // buang cerita dengan ID itu
+    localStorage.setItem("deletedStories", JSON.stringify(deletedStories));       // update localStorage
+    showRecycleBin();                                                             // render ulang tampilan Recycle Bin
+  }
+}
+
+

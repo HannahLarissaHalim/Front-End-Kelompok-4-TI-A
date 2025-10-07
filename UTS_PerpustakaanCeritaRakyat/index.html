@@ -51,6 +51,39 @@
     </section>
   </main>
 
+  <!-- MODAL TAMBAH / EDIT CERITA -->
+  <div id="modalCerita" class="modal">
+    <div class="modal-content">
+      <!-- tombol untuk menutup modal -->
+      <span id="closeModal">&times;</span>
+
+      <!-- judul modal -->
+      <h2 id="modalTitle">Tambah Cerita Baru</h2>
+      
+      <!-- form input data cerita -->
+      <form id="formCerita">
+        <!-- input judul -->
+        <label for="judul">Judul Cerita:</label>
+        <input type="text" id="judul" required />
+
+        <!-- input asal daerah -->
+        <label for="daerah">Daerah Asal:</label>
+        <input type="text" id="daerah" required />
+
+        <!-- input URL gambar -->
+        <label for="gambar">URL Gambar:</label>
+        <input type="text" id="gambar" />
+
+        <!-- teks isi cerita -->
+        <label for="isi">Isi Cerita:</label>
+        <textarea id="isi" rows="5" required></textarea>
+
+        <!-- tombol simpan (submit form) -->
+        <button type="submit" id="submitCerita">Simpan Cerita</button>
+      </form>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

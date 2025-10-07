@@ -29,7 +29,7 @@ async function loadStories() {
     renderStories(stories);
 
     // isi dropdown filter berdasarkan daerah yang ada (panggil function populateFilterOptions)
-    populateFilterOptions();
+    loadDaftarDaerah();
   } catch (err) {
     console.error("gagal memuat cerita", err); // kalau gagal tampilkan error di console
   }
@@ -52,12 +52,8 @@ function renderStories(list) {
 
   // loop setiap cerita dan buat HTML cardnya
   list.forEach(story => {
-
-    // buat elemen baru <article>
-    const card = document.createElement("article");
-
-    // tambahin kelas CSS 
-    card.classList.add("cerita-card");
+    const card = document.createElement("article"); // buat elemen baru <article>
+    card.classList.add("cerita-card");              // tambahin kelas CSS
 
     // isi elemennya dengan template HTML
     card.innerHTML = `
@@ -155,5 +151,139 @@ function exitReadMode() {
 
   // scroll ke atas
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// FUNCTION UNTUK MENGISI DROPDOWN DAERAH UNTUK FITUR FILTERING
+function loadDaftarDaerah() {
+  // ambil elemen <select> dari HTML yang ada id="filter-daerah".
+  const filterSelect = document.getElementById("filter-daerah");
+
+  // ambil semua nama daerah dari daftar cerita
+  const daerahSet = new Set(stories.map(s => s.daerah)); // pakai set supaya hasilnya gak ada duplikat
+
+  // tambahkan opsi ke dalam dropdown
+  daerahSet.forEach(daerah => {
+    const option = document.createElement("option"); // bikin elemen <option> baru
+    option.value = daerah;                           // isi value dgn nama daerah
+    option.textContent = daerah;                     // tampilkan teks daftar2 daerah di dropdown
+    filterSelect.appendChild(option);                // masukkan <option> ke <select id="filter-daerah">
+  });
+}
+
+// FITUR SEARCH & FILTER BERDASARKAN DAERAH
+
+// event saat user ketik di search bar
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  
+  const keyword = e.target.value.toLowerCase(); // ubah jadi huruf kecil biar pencarian gak case sensitive
+
+  // filter daftar cerita berdasarkan judul atau isi
+  filteredStories = stories.filter(s =>
+    s.judul.toLowerCase().includes(keyword) ||  // cocokkan dengan judul
+    s.isi.toLowerCase().includes(keyword)       // atau dgn isi cerita
+  );
+
+  renderStories(filteredStories); // tampilin hasil filter ke halaman
+});
+
+// event saat user memilih filter daerah
+document.getElementById("filter-daerah").addEventListener("change", (e) => {
+
+  const val = e.target.value;  // ambil value dr dropdown yang dipilih user       
+  
+  if (val === "all") renderStories(stories);                 // kalau user pilih semua daerah tampilkan semua cerita
+  else renderStories(stories.filter(s => s.daerah === val)); // kalau gak, tampilkan cerita berdasarkan daerah yang dipilih
+});
+
+
+// FITUR TAMBAH CERITA BARU
+const modal = document.getElementById("modalCerita");         // ambil elemen modal (popup form tambah/edit)
+const btnTambah = document.getElementById("btnTambahCerita"); // ambil tombol tambah cerita
+const closeModal = document.getElementById("closeModal");     // ambil tombol menutup modal
+
+// event saat user klik tombol tambah cerita
+btnTambah.addEventListener("click", () => {
+
+  modal.style.display = "flex"; // tampilkan modal dgn display flex spy muncul di tengah
+
+  document.getElementById("modalTitle").textContent = "Tambah Cerita Baru"; // ubah judul modal
+
+  currentStoryId = null; // reset ID karena ini nambah cerita baru
+
+  document.getElementById("formCerita").reset(); // kosongin semua input di form
+});
+
+// event saat user klik tombol menutup modal
+closeModal.addEventListener("click", () => (modal.style.display = "none"));
+
+// event saat user klik tombol simpan cerita dalam form modal
+document.getElementById("formCerita").addEventListener("submit", (e) => {
+
+  e.preventDefault();  // supaya halaman gak ke reload otomatis 
+
+  // ambil nilai input dari form
+  const judul = document.getElementById("judul").value;
+  const daerah = document.getElementById("daerah").value;
+  const gambar = document.getElementById("gambar").value || "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+  const isi = document.getElementById("isi").value;
+
+  // kalau currentStoryId ada berarti user lagi edit cerita lama
+  if (currentStoryId) {
+    const idx = stories.findIndex(s => s.id === currentStoryId);    // cari index cerita yg lagi diedit
+    stories[idx] = { ...stories[idx], judul, daerah, gambar, isi }; // update data ceritanya
+  } else {
+    // kalau gak ada berarti user nambah cerita baru
+    const newStory = {
+      id: Date.now(),
+      judul,
+      daerah,
+      gambar,
+      isi,
+      dibaca: false
+    };
+    stories.push(newStory);     // tambahin ke array stories
+  }
+
+  modal.style.display = "none"; // tutup modal kalo data udah disimpan
+  renderStories(stories);       // tampilin ulang
+});
+
+// FUNCTION UNTUK EDIT CERITA
+function openEditModal(id) {
+  const story = stories.find(s => s.id === id); // cari cerita berdasarkan ID yang diklik user
+  if (!story) return;                           // kalau gak ditemukan, hentikan fungsi
+
+  modal.style.display = "flex"; // tampilkan modal form di layar
+
+  document.getElementById("modalTitle").textContent = "Edit Cerita"; // ganti judul modal jd “Edit Cerita”
+  document.getElementById("judul").value = story.judul;              // isi judul pake data lama
+  document.getElementById("daerah").value = story.daerah;            // isi asal daerah
+  document.getElementById("gambar").value = story.gambar;            // isi gambar
+  document.getElementById("isi").value = story.isi;                  // isi cerita
+
+  currentStoryId = id; // simpan ID cerita yang sedang diedit
+}
+
+// FUNCTION UNTUK HAPUS CERITA 
+function deleteStory(id) {
+
+  // popup konfirmasi
+  if (confirm("Apakah kamu yakin ingin menghapus cerita ini? Cerita akan dipindahkan ke Recycle Bin.")) {
+    
+    // cari cerita yang mau dihapus berdasarkan ID
+    const deleted = stories.find(s => s.id === id);
+
+    // kalo ketemu, pindahin ke recycle bin
+    if (deleted) {
+      deletedStories.push(deleted);                                           // masukin ke array deletedStories
+      localStorage.setItem("deletedStories", JSON.stringify(deletedStories)); // simpan ke localStorage biar gak ilang pas refresh
+    }
+
+    // hapus cerita dr daftar utama
+    stories = stories.filter(s => s.id !== id);
+
+    // tampilin ulang
+    renderStories(stories);
+  }
 }
 

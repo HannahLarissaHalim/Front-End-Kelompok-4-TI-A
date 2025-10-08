@@ -41,7 +41,9 @@ body {
 /* logo perpustakaan cerita rakyat */
 .logo h2 {
   color: #F4EFE6;
-  letter-spacing: 1px;
+  font-family: 'Traditional-Arabic';   
+  letter-spacing: 1px;    
+  line-height: 1.0;      
   text-align: center;
 }
 

@@ -445,4 +445,58 @@ function deleteForever(id) {
   }
 }
 
+// NAVIGATION BAR 
+// buat atur navigasi halaman di sidebar (home, favorit, catatan, dll)
 
+// ambil semua elemen <li> di dalam .navigation-links (menu navigasi), lalu looping
+document.querySelectorAll(".navigation-links li").forEach(li => {
+
+  // event saat user klik salah satu menu
+  li.addEventListener("click", () => {
+
+    document.querySelectorAll(".navigation-links li").forEach(x => x.classList.remove("active")); // hapus class active dari semua menu biar gak ke double
+    
+    li.classList.add("active");         // kasih class active ke menu yang baru diklik
+
+    const section = li.dataset.section; // ambil nilai dari atribut data-section
+
+    showSection(section);               // tampilin halaman sesuai section yang diklik
+  });
+});
+
+// FUNCTION SHOWSECTION
+// nentuin halaman mana yang ditampilkan berdasarkan menu yang diklik
+function showSection(section) {
+  switch (section) {
+    case "home":
+      renderStories(stories); // tampil semua cerita
+      break;
+    case "favorites":
+      renderStories(stories.filter(s => favorites.includes(s.id))); // cuma yang difavoritkan
+      break;
+    case "bookmarks":
+      renderStories(stories.filter(s => bookmarks.includes(s.id))); // cuma yang dibookmark
+      break;
+    case "read":
+      renderStories(stories.filter(s => s.dibaca)); // cuma yang udah ditandain sudah dibaca
+      break;
+    case "notes":
+      renderNotes();    // halaman catatan pribadi
+      break;
+    case "stats":
+      showStats();      // halaman statistik
+      break;
+    case "recycle-bin":
+      showRecycleBin(); // halaman recycle bin
+      break;
+  }
+}
+
+// INISIALISASI
+// fungsi ini jalan otomatis waktu halaman pertama kali dibuka
+window.onload = () => {
+  loadStories(); // load data cerita dari file JSON
+};
+
+// biar fungsi exitReadMode() bisa dipanggil dari HTML
+window.exitReadMode = exitReadMode;

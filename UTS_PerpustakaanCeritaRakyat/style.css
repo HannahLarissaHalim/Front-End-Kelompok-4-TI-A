@@ -1,0 +1,415 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-image: url("images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #523D2D; /* warna teks utama Teddy Bear */
+  display: flex;
+  min-height: 100vh;
+}
+
+/* sidebar */
+.sidebar {
+  width: 220px;
+  background: rgba(82, 61, 45, 0.55); 
+  color: #F4EFE6;
+  padding: 1rem 0;
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 3px 0 20px rgba(0, 0, 0, 0.25);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* logo perpustakaan cerita rakyat */
+.logo h2 {
+  color: #F4EFE6;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* navigation link */
+.navigation-links {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.navigation-links li {
+  padding: 12px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.3s;
+  font-weight: 600;
+}
+
+.navigation-links li:hover {
+  background: rgba(244, 239, 230, 0.25);
+}
+
+.navigation-links li.active {
+  background: rgba(244, 239, 230, 0.35);
+}
+
+.navigation-links li span {
+  margin-left: 8px;
+}
+
+/* area utama */
+main {
+  margin-left: 220px;
+  padding: 20px 40px;
+  width: calc(100% - 220px);
+}
+
+/* header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(244, 239, 230, 0.9); 
+  padding: 12px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(82, 61, 45, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+/* search bar dan dropdown daerah */
+header input,
+header select {
+  background-color: rgba(250, 247, 241, 0.95); 
+  border: 1px solid rgba(82, 61, 45, 0.2);
+  color: #523D2D;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-right: 10px;
+  font-family: sans-serif;
+  transition: all 0.3s ease;
+}
+
+header input:focus,
+header select:focus {
+  outline: none;
+  border-color: rgba(82, 61, 45, 0.4);
+  box-shadow: 0 0 6px rgba(82, 61, 45, 0.25);
+}
+
+/* tombol tambah cerita */
+header button {
+  background-color: #523D2D; 
+  color: #F4EFE6;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+header button:hover {
+  background-color: #6A5040;
+  transform: translateY(-2px);
+}
+
+/* card cerita */
+.cerita-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.cerita-card {
+  background: rgba(253, 248, 242, 0.65); /* kertas vanilla bening */
+  border: 1px solid rgba(82, 61, 45, 0.15);
+  border-radius: 14px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.cerita-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* info dalam card, ada gambar & teks */
+.card-top {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.card-top img {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #E0D4C6;
+}
+
+.card-info h3 {
+  color: #3A2B22;
+  font-weight: 700;
+}
+
+.card-info p {
+  color: #59493E;
+}
+
+/* tombol baca cerita */
+.card-buttons {
+  margin-top: 15px;
+}
+
+.card-buttons button {
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.card-buttons button:hover {
+  background-color: #6A5040;
+}
+
+/* modal tambah / edit cerita (popup form) */
+.modal-content {
+  background: #F4EFE6;
+  border: 2px solid rgba(82, 61, 45, 0.2);
+}
+
+.modal-content label {
+  color: #523D2D;
+}
+
+#submitCerita {
+  background-color: #523D2D;
+  color: #F4EFE6;
+}
+
+#submitCerita:hover {
+  background-color: #6A5040;
+}
+
+/* mode baca cerita */
+.fullscreen-mode {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fffdf8;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* tombol kembali */
+.back-btn {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-btn:hover {
+  background-color: #6A5040;
+}
+
+/* isi cerita di mode baca, ada teks dan gambar */
+.fullscreen-container {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 60px 20px 50px;
+  text-align: center;
+}
+
+.baca-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.baca-wrapper h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #3E2C22;
+}
+
+.baca-wrapper .info-daerah {
+  font-weight: 600;
+  color: #6A5040;
+  margin-bottom: 15px;
+  font-size: 1.05rem;
+}
+
+.baca-wrapper img {
+  width: 100%;
+  max-width: 850px;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px 0;
+  border: 2px solid rgba(82, 61, 45, 0.2);
+  object-fit: cover;
+}
+
+.baca-wrapper .isi-cerita {
+  text-align: justify;
+  max-width: 800px;
+  line-height: 1.8;
+  color: #3E2C22;
+  font-size: 1.05rem;
+  margin-bottom: 35px;
+}
+
+/* tombol aksi di mode baca (favorit, simpan, dll) */
+.fullscreen-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.fullscreen-buttons button {
+  background-color: #523D2D;  
+  color: #F4EFE6;             
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.fullscreen-buttons button:hover {
+  background-color: #6A5040;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* modal popup, overlay dan isi form */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); 
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: #F4EFE6; 
+  border-radius: 14px;
+  padding: 25px 30px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  border: 2px solid rgba(82, 61, 45, 0.2);
+  color: #523D2D; 
+  font-family: sans-serif;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  color: #523D2D;
+  text-align: center;
+  font-weight: 700;
+}
+
+#closeModal {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6A5040;
+}
+
+#closeModal:hover {
+  color: #2F241B;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #3E2C22;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #C7BEB2;
+  background-color: #FFFDF9;
+  font-family: 'Nunito', sans-serif;
+  color: #523D2D;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  outline: none;
+  border-color: #B89A80;
+  box-shadow: 0 0 5px rgba(82, 61, 45, 0.3);
+}
+
+#submitCerita {
+  margin-top: 18px;
+  background-color: #523D2D; 
+  color: #F4EFE6;            
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+#submitCerita:hover {
+  background-color: #6A5040;
+}
+
+/* responsive design */
+@media (max-width: 768px) {
+  .sidebar { width: 70px; }
+  .sidebar h2, .sidebar li span { display: none; }
+  main { margin-left: 70px; padding: 15px; }
+  .card-top { flex-direction: column; align-items: center; }
+  .card-top img { width: 80%; height: auto; }
+  .baca-wrapper h2 { font-size: 1.5rem; }
+}

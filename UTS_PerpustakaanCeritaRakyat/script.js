@@ -116,8 +116,8 @@ function viewStory(id) {
      
       <!-- tombol2 -->
       <div class="fullscreen-buttons">
-        <button onclick="toggleFavorite(${story.id})">Favorit</button>
-        <button onclick="toggleBookmark(${story.id})">Simpan</button>
+        <button onclick="favorite(${story.id})">Favorit</button>
+        <button onclick="bookmark(${story.id})">Simpan</button>
         <button onclick="markAsRead(${story.id})">Tandai Dibaca</button>
         <button onclick="openEditModal(${story.id})">Edit</button>
         <button onclick="deleteStory(${story.id})">Hapus</button>

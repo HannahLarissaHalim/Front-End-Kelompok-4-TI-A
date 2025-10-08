@@ -467,27 +467,42 @@ document.querySelectorAll(".navigation-links li").forEach(li => {
 // FUNCTION SHOWSECTION
 // nentuin halaman mana yang ditampilkan berdasarkan menu yang diklik
 function showSection(section) {
+  const btnTambah = document.getElementById("btnTambahCerita");
+
   switch (section) {
     case "home":
       renderStories(stories); // tampil semua cerita
+      btnTambah.style.display = "block"; // tombol tambah cuma ada di beranda
       break;
+
     case "favorites":
       renderStories(stories.filter(s => favorites.includes(s.id))); // cuma yang difavoritkan
+      btnTambah.style.display = "none";
       break;
+
     case "bookmarks":
       renderStories(stories.filter(s => bookmarks.includes(s.id))); // cuma yang dibookmark
+      btnTambah.style.display = "none";
       break;
+
     case "read":
       renderStories(stories.filter(s => s.dibaca)); // cuma yang udah ditandain sudah dibaca
+      btnTambah.style.display = "none";
       break;
+
     case "notes":
       renderNotes();    // halaman catatan pribadi
+      btnTambah.style.display = "none";
       break;
+      
     case "stats":
       showStats();      // halaman statistik
+      btnTambah.style.display = "none";
       break;
+
     case "recycle-bin":
       showRecycleBin(); // halaman recycle bin
+      btnTambah.style.display = "none";
       break;
   }
 }

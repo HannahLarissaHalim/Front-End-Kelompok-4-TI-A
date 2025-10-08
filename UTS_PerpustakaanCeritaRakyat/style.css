@@ -1,6 +1,16 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Traditional-Arabic';
+  src: url('fonts/trado.ttf');
+}
+
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Montserrat', sans-serif;
   background-image: url("images/background.jpg");
   background-size: cover;
   background-position: center;
@@ -28,7 +38,7 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* logo perpustakaan cerita rakyatr */
+/* logo perpustakaan cerita rakyat */
 .logo h2 {
   color: #F4EFE6;
   letter-spacing: 1px;
@@ -318,6 +328,12 @@ header button:hover {
   background-color: #6A5040;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.baca-wrapper h2,
+.baca-wrapper .info-daerah,
+.baca-wrapper .isi-cerita {
+  font-family: 'Traditional-Arabic', serif;
 }
 
 /* modal popup, overlay dan isi form */

@@ -38,6 +38,12 @@ async function loadStories() {
 // FUNGSI UNTUK RENDER CARD CERITA
 // parameter list itu data cerita yang mau ditampilkan saat itu.
 function renderStories(list) {
+  // matikan mode baca dimatikan
+  document.querySelector(".sidebar").style.display = "flex";
+  document.querySelector("header").style.display = "flex";
+  document.querySelector("main").classList.remove("fullscreen-mode");
+  document.getElementById("ceritaContainer").classList.remove("fullscreen-container");
+
   // ambil elemen <section id="ceritaContainer">
   const container = document.getElementById("ceritaContainer");
 

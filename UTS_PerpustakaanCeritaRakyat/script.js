@@ -513,6 +513,8 @@ document.querySelectorAll(".navigation-links li").forEach(li => {
     li.classList.add("active");         // kasih class active ke menu yang baru diklik
 
     const section = li.dataset.section; // ambil nilai dari atribut data-section
+    
+    localStorage.setItem("lastSection", section); // simpan halaman terakhir di localStorage
 
     showSection(section);               // tampilin halaman sesuai section yang diklik
   });
@@ -577,6 +579,21 @@ function showSection(section) {
 // fungsi ini jalan otomatis waktu halaman pertama kali dibuka
 window.onload = () => {
   loadStories(); // load data cerita dari file JSON
+
+  // ambil halaman terakhir yang tersimpan
+  const lastSection = localStorage.getItem("lastSection");
+
+  // kalau ada halaman terakhir tampilkan itu
+  if (lastSection) {
+    document.querySelectorAll(".navigation-links li").forEach(li => {
+      li.classList.toggle("active", li.dataset.section === lastSection);
+    });
+    showSection(lastSection);
+  } else {
+    // kalau belum ada default ke home
+    showSection("home");
+  }
+
 };
 
 // biar fungsi exitReadMode() bisa dipanggil dari HTML

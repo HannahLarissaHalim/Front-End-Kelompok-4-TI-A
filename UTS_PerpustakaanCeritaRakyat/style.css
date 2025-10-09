@@ -38,12 +38,10 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* logo perpustakaan cerita rakyat */
+/* logo perpustakaan cerita rakyatr */
 .logo h2 {
   color: #F4EFE6;
-  font-family: 'Traditional-Arabic';   
-  letter-spacing: 1px;    
-  line-height: 1.0;      
+  letter-spacing: 1px;
   text-align: center;
 }
 
@@ -289,21 +287,29 @@ header button:hover {
 
 .baca-wrapper img {
   width: 100%;
-  max-width: 850px;
-  height: auto;
+  max-width: 400px;
+  aspect-ratio: 2 / 3;
   border-radius: 10px;
   margin: 20px 0;
   border: 2px solid rgba(82, 61, 45, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   object-fit: cover;
 }
 
 .baca-wrapper .isi-cerita {
   text-align: justify;
-  max-width: 800px;
+  max-width: 850px;
   line-height: 1.8;
-  color: #3E2C22;
+  color: #4a3a2e;
   font-size: 1.05rem;
-  margin-bottom: 35px;
+  margin-bottom: 25px;
+  white-space: pre-wrap;
+}
+
+.baca-wrapper .isi-cerita br {
+  display: block;
+  content: "";
+  margin-top: 9px;
 }
 
 /* tombol aksi di mode baca (favorit, simpan, dll) */
@@ -330,12 +336,6 @@ header button:hover {
   background-color: #6A5040;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.baca-wrapper h2,
-.baca-wrapper .info-daerah,
-.baca-wrapper .isi-cerita {
-  font-family: 'Traditional-Arabic', serif;
 }
 
 /* modal popup, overlay dan isi form */
@@ -411,6 +411,44 @@ header button:hover {
   box-shadow: 0 0 5px rgba(82, 61, 45, 0.3);
 }
 
+.modal-content #gambar {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #C7BEB2;
+  background-color: #FFFDF9;
+  font-family: 'Nunito', sans-serif;
+  color: #523D2D;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-content #gambar::file-selector-button {
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.modal-content #gambar::file-selector-button:hover {
+  background-color: #6A5040;
+  transform: translateY(-1px);
+}
+
+.modal-content #gambar:focus {
+  outline: none;
+  border-color: #B89A80;
+  box-shadow: 0 0 5px rgba(82, 61, 45, 0.3);
+}
+
 #submitCerita {
   margin-top: 18px;
   background-color: #523D2D; 
@@ -430,10 +468,84 @@ header button:hover {
 
 /* responsive design */
 @media (max-width: 768px) {
-  .sidebar { width: 70px; }
-  .sidebar h2, .sidebar li span { display: none; }
-  main { margin-left: 70px; padding: 15px; }
-  .card-top { flex-direction: column; align-items: center; }
-  .card-top img { width: 80%; height: auto; }
-  .baca-wrapper h2 { font-size: 1.5rem; }
+  .sidebar { 
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 15px; 
+  }
+
+  .sidebar h2, .sidebar li span { 
+    display: none; 
+  }
+
+  .sidebar .logo h2 {
+    font-size: 1.2rem;
+    text-align: left;
+    margin: 0;
+  }
+
+  .navigation-links {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+  }
+
+  .navigation-links li {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+
+  main { 
+    margin-left: 70px; 
+    padding: 15px; 
+  }
+
+  .card-top { 
+    flex-direction: column; 
+    align-items: center; 
+  }
+
+  .card-top img { 
+    width: 80%; 
+    height: auto; 
+  }
+
+  .baca-wrapper h2 { 
+    font-size: 1.5rem; 
+  }
+}
+
+@media (max-width: 900px) {
+  .baca-wrapper img {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .baca-wrapper img {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar .logo h2 {
+    font-size: 1rem;
+  }
+
+  .navigation-links {
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .navigation-links li {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
 }

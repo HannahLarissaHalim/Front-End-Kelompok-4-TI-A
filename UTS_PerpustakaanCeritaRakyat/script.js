@@ -116,14 +116,61 @@ function viewStory(id) {
      
       <!-- tombol2 -->
       <div class="fullscreen-buttons">
-        <button onclick="favorite(${story.id})">Favorit</button>
-        <button onclick="bookmark(${story.id})">Simpan</button>
-        <button onclick="markAsRead(${story.id})">Tandai Dibaca</button>
+        <button onclick="addFavorite(${story.id})">Favorit</button>
+        <button onclick="addBookmark(${story.id})">Simpan</button>
+        <button onclick="addRead(${story.id})">Tandai Dibaca</button>
         <button onclick="openEditModal(${story.id})">Edit</button>
         <button onclick="deleteStory(${story.id})">Hapus</button>
       </div>
     </div>
   `;
+}
+
+function removeFromFavorites(id) {
+  favorites = favorites.filter(f => f !== id);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  showSection("favorites"); 
+}
+
+function removeFromBookmarks(id) {
+  bookmarks = bookmarks.filter(b => b !== id);
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  showSection("bookmarks");
+}
+
+function removeFromRead(id) {
+  const story = stories.find(s => s.id === id);
+  if (story) story.dibaca = false; 
+  showSection("read");
+}
+
+function showCardsByCategory(list, type, removeFunction) {
+  const container = document.getElementById("ceritaContainer");
+  container.innerHTML = `<h2>${type}</h2>`;
+
+  if (list.length === 0) {
+    container.innerHTML += `<p>Tidak ada cerita di ${type.toLowerCase()}.</p>`;
+    return;
+  }
+
+  list.forEach(story => {
+    const card = document.createElement("article");
+    card.classList.add("cerita-card");
+    card.innerHTML = `
+      <div class="card-top">
+        <img src="${story.gambar}" alt="${story.judul}">
+        <div class="card-info">
+          <h3>${story.judul}</h3>
+          <p><strong>Daerah:</strong> ${story.daerah}</p>
+        </div>
+      </div>
+      <div class="card-buttons">
+        <button onclick="viewStory(${story.id})">Baca Cerita</button>
+        <button onclick="${removeFunction.name}(${story.id})">Hapus dari ${type}</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 // FUNCTION UNTUK KELUAR DARI MODE BACA CERITA 
@@ -289,35 +336,37 @@ function deleteStory(id) {
 
 // FUNCTION FAVORITE
 // buat tambahin atau hapus cerita dari daftar favorit
-function favorite(id) {
-  if (favorites.includes(id)) favorites = favorites.filter(f => f !== id); // kalau id udah ada di array favorites, hapus idnya
-  else favorites.push(id);                                                 // kalau belum ada, tambahin id cerita ke array favorites
-
-  localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan data cerita favorit ke localStorage biar gak ilang pas refresh
+function addFavorite(id) {
+  if (!favorites.includes(id)) {
+    favorites.push(id);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    alert("Cerita ditambahkan ke Favorit!");
+  } else {
+    alert("Cerita ini sudah ada di Favorit.");
+  }
 }
 
 // FUNCTION BOOKMARK
 // buat tambahin atau hapus cerita dari daftar disimpan (bookmark)
-function bookmark(id) {
-
-  // bikin array baru yang isinya semua elemen kecuali yang id-nya sama dengan yang diklik.
-  if (bookmarks.includes(id)) bookmarks = bookmarks.filter(b => b !== id); 
-  // kalau belum ada, tambahin id cerita ke array bookmarks
-  else bookmarks.push(id);                                                 
-
-  localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); // simpan data bookmark ke localStorage biar gak ilang pas refresh
+function addBookmark(id) {
+  if (!bookmarks.includes(id)) {
+    bookmarks.push(id);
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    alert("Cerita disimpan ke Bookmark!");
+  } else {
+    alert("Cerita ini sudah ada di Bookmark.");
+  }
 }
 
 // FUNCTION MARKASREAD
 // buat tandain kalo cerita udah dibaca
-function markAsRead(id) {
-  // cari cerita yang idnya sama dengan id yang dikirim
-  const story = stories.find(s => s.id === id); 
-  
-  // kalau ceritanya ketemu
-  if (story) {
-    story.dibaca = true;                                       // tandai sudah dibaca
-    alert(`Cerita "${story.judul}" ditandai sudah dibaca :D`); // kasih alert ke user
+function addRead(id) {
+  const story = stories.find(s => s.id === id);
+  if (story && !story.dibaca) {
+    story.dibaca = true;
+    alert(`Cerita "${story.judul}" ditandai sudah dibaca.`);
+  } else if (story) {
+    alert(`Cerita "${story.judul}" sudah ditandai dibaca.`);
   }
 }
 
@@ -471,37 +520,49 @@ function showSection(section) {
 
   switch (section) {
     case "home":
-      renderStories(stories); // tampil semua cerita
-      btnTambah.style.display = "block"; // tombol tambah cuma ada di beranda
+      renderStories(stories);
+      btnTambah.style.display = "block";
       break;
 
     case "favorites":
-      renderStories(stories.filter(s => favorites.includes(s.id))); // cuma yang difavoritkan
+      showCardsByCategory(
+        stories.filter(s => favorites.includes(s.id)),
+        "Favorit",
+        removeFromFavorites
+      );
       btnTambah.style.display = "none";
       break;
 
     case "bookmarks":
-      renderStories(stories.filter(s => bookmarks.includes(s.id))); // cuma yang dibookmark
+      showCardsByCategory(
+        stories.filter(s => bookmarks.includes(s.id)),
+        "Bookmark",
+        removeFromBookmarks
+      );
       btnTambah.style.display = "none";
       break;
 
     case "read":
-      renderStories(stories.filter(s => s.dibaca)); // cuma yang udah ditandain sudah dibaca
+      showCardsByCategory(
+        stories.filter(s => s.dibaca),
+        "Sudah Dibaca",
+        removeFromRead
+      );
       btnTambah.style.display = "none";
       break;
 
     case "notes":
-      renderNotes();    // halaman catatan pribadi
+      renderNotes();
       btnTambah.style.display = "none";
       break;
-      
+
     case "stats":
-      showStats();      // halaman statistik
+      showStats();
       btnTambah.style.display = "none";
       break;
 
     case "recycle-bin":
-      showRecycleBin(); // halaman recycle bin
+      showRecycleBin();
       btnTambah.style.display = "none";
       break;
   }

@@ -421,19 +421,19 @@ function renderNotes() {
 // FUNCTION SHOWSTATS
 // untuk menunjukkan statistik 
 function showStats() {
-  const total = stories.length;
   const fav = favorites.length;
   const saved = bookmarks.length;
   const read = stories.filter(s => s.dibaca).length;
 
   const container = document.getElementById("ceritaContainer");
   container.innerHTML = `
+  <div class="stats-wrapper">
     <div class="stats-container">
-      <div class="stats-card">Total Cerita<br><strong>${total}</strong></div>
       <div class="stats-card">Favorit<br><strong>${fav}</strong></div>
       <div class="stats-card">Disimpan<br><strong>${saved}</strong></div>
       <div class="stats-card">Sudah Dibaca<br><strong>${read}</strong></div>
     </div>
+  </div>
   `;
 }
 
@@ -449,7 +449,7 @@ function showRecycleBin() {
 
   // kalau array deletedStories kosong berarti belum ada cerita yang dihapus
   if (deletedStories.length === 0) {
-    container.innerHTML += `<p class="empty-message">Tidak ada cerita di Recycle Bin.</p>`;
+    container.innerHTML += `<p class="empty-message">Tidak ada cerita.</p>`;
     return;
   }
 

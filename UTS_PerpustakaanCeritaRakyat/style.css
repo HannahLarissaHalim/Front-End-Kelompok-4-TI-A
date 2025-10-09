@@ -43,6 +43,7 @@ body {
   color: #F4EFE6;
   letter-spacing: 1px;
   text-align: center;
+  font-family: Traditional-Arabic;
 }
 
 /* navigation links */
@@ -261,9 +262,9 @@ header button:hover {
 
 /* tombol hapus dari */
 .card-buttons button:nth-child(2) {
-  width: 140px;          
+  width: 170px;          
   height: 34px;
-  background-color: #70523F;
+  background-color: #523D2D;
 }
 
 .card-buttons button:nth-child(2):hover {
@@ -509,14 +510,21 @@ header button:hover {
   font-family: 'Traditional-Arabic', serif;
 }
 
+/* wrapper untuk seluruh bagian statistik */
+.stats-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  align-items: center;       
+}
+
 /* container untuk semua kartu statistik */ 
 .stats-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  align-items: flex-start;
-  margin-top: 20px;
+  flex-direction: column;   
+  justify-content: center;  
+  align-items: center;     
+  gap: 20px;  
 }
 
 /* style masing-masing kartu statistik */
@@ -524,12 +532,13 @@ header button:hover {
   background: rgba(253, 248, 242, 0.8);
   border: 1px solid rgba(82, 61, 45, 0.15);
   border-radius: 14px;
-  padding: 20px 30px;
+  padding: 12px 18px; 
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
   text-align: center;
   font-weight: 600;
   color: #523D2D;
-  width: 250px;
+  width: 180px;
+  font-size: 0.95rem;
 }
 
 .modal-content input:focus,
@@ -592,6 +601,8 @@ header button:hover {
 
 #submitCerita:hover {
   background-color: #6A5040;
+}
+
 /* pesan tidak ada cerita/catatan */
 .empty-message {
   grid-column: 1 / -1;
@@ -684,5 +695,4 @@ header button:hover {
     padding: 6px 8px;
     font-size: 0.8rem;
   }
-}
 }

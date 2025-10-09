@@ -46,7 +46,7 @@ function renderStories(list) {
 
   // kalo gak ada cerita yang cocok dengan filter/search
   if (list.length === 0) {
-    container.innerHTML = "<p>Cerita tidak ada :(</p>";
+    container.innerHTML = "<p>Tidak ada cerita.(</p>";
     return;
   }
 
@@ -146,10 +146,10 @@ function removeFromRead(id) {
 
 function showCardsByCategory(list, type, removeFunction) {
   const container = document.getElementById("ceritaContainer");
-  container.innerHTML = `<h2>${type}</h2>`;
+  container.innerHTML = "";
 
   if (list.length === 0) {
-    container.innerHTML += `<p class="empty-message">Tidak ada cerita di ${type.toLowerCase()}.</p>`;
+    container.innerHTML += `<p class="empty-message">Tidak ada cerita.</p>`;
     return;
   }
 
@@ -385,11 +385,11 @@ function renderNotes() {
   const container = document.getElementById("ceritaContainer");
   
   // ganti isi container mjd judul catatan
-  container.innerHTML = "<h2>Catatan</h2>";                 
+  container.innerHTML = "";                 
 
   // kalo belum ada catatan yang disimpan
   if (Object.keys(notes).length === 0) {
-    container.innerHTML += "<p>Tidak ada catatan.</p>";
+    container.innerHTML += `<p class="empty-message">Tidak ada catatan.</p>`;
     return; // keluar dari fungsi
   }
 
@@ -421,7 +421,6 @@ function showStats() {
 
   const container = document.getElementById("ceritaContainer");
   container.innerHTML = `
-    <h2>Statistik Bacaan</h2>
     <div class="stats-container">
       <div class="stats-card">Total Cerita<br><strong>${total}</strong></div>
       <div class="stats-card">Favorit<br><strong>${fav}</strong></div>
@@ -439,11 +438,11 @@ function showRecycleBin() {
   const container = document.getElementById("ceritaContainer");
 
   // ubah judul/headernya jadi Recycle Bin 
-  container.innerHTML = "<h2>Recycle Bin</h2>";
+  container.innerHTML = "";
 
   // kalau array deletedStories kosong berarti belum ada cerita yang dihapus
   if (deletedStories.length === 0) {
-    container.innerHTML += "<p>Tidak ada cerita.</p>";
+    container.innerHTML += `<p class="empty-message">Tidak ada cerita di Recycle Bin.</p>`;
     return;
   }
 

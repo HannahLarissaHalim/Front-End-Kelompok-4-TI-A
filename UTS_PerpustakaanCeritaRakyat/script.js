@@ -112,7 +112,7 @@ function viewStory(id) {
       <h2>${story.judul}</h2>
       <img src="${story.gambar}" alt="${story.judul}">
       <p class="info-daerah"><strong>Daerah:</strong> ${story.daerah}</p>
-      <p class="isi-cerita">${story.isi}</p>
+      <p class="isi-cerita">${story.isi.replace(/\n/g, '<br>')}</p>
      
       <!-- tombol2 -->
       <div class="fullscreen-buttons">
@@ -224,8 +224,15 @@ document.getElementById("formCerita").addEventListener("submit", (e) => {
   // ambil nilai input dari form
   const judul = document.getElementById("judul").value;
   const daerah = document.getElementById("daerah").value;
-  const gambar = document.getElementById("gambar").value || "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
   const isi = document.getElementById("isi").value;
+  const gambar = document.getElementById("gambar");
+
+  let path_gambar = "";
+  // jika user memilih file image
+  if (gambar.files && gambar.files[0]) {
+    const file = gambar.files[0];
+    path_gambar = URL.createObjectURL(file);
+  }
 
   // kalau currentStoryId ada berarti user lagi edit cerita lama
   if (currentStoryId) {
@@ -237,7 +244,7 @@ document.getElementById("formCerita").addEventListener("submit", (e) => {
       id: Date.now(),
       judul,
       daerah,
-      gambar,
+      gambar: path_gambar,
       isi,
       dibaca: false
     };

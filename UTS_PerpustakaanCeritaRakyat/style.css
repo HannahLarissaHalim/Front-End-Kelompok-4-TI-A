@@ -142,20 +142,40 @@ header button:hover {
 /* card cerita */
 .cerita-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
   gap: 20px;
+  justify-items: center;
+  align-items: start;
+  margin-top: 20px;
 }
 
 .cerita-card {
-  background: rgba(253, 248, 242, 0.65); /* kertas vanilla bening */
-  border: 1px solid rgba(82, 61, 45, 0.15);
+  width: 100%;
+  max-width: 330px;  /* biar ukuran konsisten */
+  min-height: 250px; /* tinggi minimum biar gak aneh kalo isinya pendek */
+  background: rgba(253, 248, 242, 0.8);
   border-radius: 14px;
   padding: 16px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s, box-shadow 0.3s;
 }
+
+.cerita-container h2 {
+  grid-column: 1 / -1;
+  text-align: left;
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  color: #3A2B22;
+}
+
+.cerita-container p {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6A5040;
+  font-size: 1.1rem;
+}
+
+
 
 .cerita-card:hover {
   transform: translateY(-5px);
@@ -428,6 +448,27 @@ header button:hover {
   background-color: #6A5040;
 }
 
+.stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.stats-card {
+  background: rgba(253, 248, 242, 0.8);
+  border: 1px solid rgba(82, 61, 45, 0.15);
+  border-radius: 14px;
+  padding: 20px 30px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  font-weight: 600;
+  color: #523D2D;
+  width: 250px;
+}
+
 /* responsive design */
 @media (max-width: 768px) {
   .sidebar { width: 70px; }
@@ -436,4 +477,13 @@ header button:hover {
   .card-top { flex-direction: column; align-items: center; }
   .card-top img { width: 80%; height: auto; }
   .baca-wrapper h2 { font-size: 1.5rem; }
+}
+
+.empty-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6A5040;
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-top: 10px;
 }

@@ -149,7 +149,7 @@ function showCardsByCategory(list, type, removeFunction) {
   container.innerHTML = `<h2>${type}</h2>`;
 
   if (list.length === 0) {
-    container.innerHTML += `<p>Tidak ada cerita di ${type.toLowerCase()}.</p>`;
+    container.innerHTML += `<p class="empty-message">Tidak ada cerita di ${type.toLowerCase()}.</p>`;
     return;
   }
 
@@ -414,24 +414,23 @@ function renderNotes() {
 // FUNCTION SHOWSTATS
 // untuk menunjukkan statistik 
 function showStats() {
-  // data-data statistiknya
-  const total = stories.length; 
-  const fav = favorites.length; 
+  const total = stories.length;
+  const fav = favorites.length;
   const saved = bookmarks.length;
   const read = stories.filter(s => s.dibaca).length;
 
-  // ambil elemen utama tempat isi halaman
   const container = document.getElementById("ceritaContainer");
-
-  // tampilkan datanya
   container.innerHTML = `
     <h2>Statistik Bacaan</h2>
-    <p>Total Cerita: <strong>${total}</strong></p>
-    <p>Favorit: <strong>${fav}</strong></p>
-    <p>Disimpan: <strong>${saved}</strong></p>
-    <p>Sudah Dibaca: <strong>${read}</strong></p>
+    <div class="stats-container">
+      <div class="stats-card">Total Cerita<br><strong>${total}</strong></div>
+      <div class="stats-card">Favorit<br><strong>${fav}</strong></div>
+      <div class="stats-card">Disimpan<br><strong>${saved}</strong></div>
+      <div class="stats-card">Sudah Dibaca<br><strong>${read}</strong></div>
+    </div>
   `;
 }
+
 
 // RECYCLE BIN
 function showRecycleBin() {

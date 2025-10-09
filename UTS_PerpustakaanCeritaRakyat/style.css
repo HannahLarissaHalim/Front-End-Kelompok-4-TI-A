@@ -153,14 +153,8 @@ header {
   backdrop-filter: blur(6px);
 }
 
-.menu-toggle {
-  background: none;
-  border: none;
-  color: #F4EFE6;
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: none;
-}
+
+
 
 /* container card cerita */
 .cerita-container {
@@ -491,6 +485,7 @@ header {
 #modalCatatan #submitCatatan:hover {
   background-color: #6A5040;
 }
+
 
 /* mode baca cerita */
 .fullscreen-mode {
@@ -1056,6 +1051,8 @@ header {
   background-color: #6A5040;
   transform: translateY(-2px);
 }
+
+
 
 @media (max-width: 900px) {
   .baca-wrapper img {

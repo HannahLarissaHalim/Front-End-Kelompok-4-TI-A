@@ -684,7 +684,7 @@ function showSection(section) {
 
     case "notes":
       renderNotes();
-      
+
       // tampilkan tombol catatan
       btnTambahCerita.style.display = "none";
       btnTambahCatatan.style.display = "inline-block";
@@ -701,7 +701,7 @@ function showSection(section) {
       // sembunyikan search dan filter 
       document.getElementById("searchInput").style.display = "none";
       document.getElementById("filter-daerah").style.display = "none";
-
+      
       // kasih tinggi tetap biar header gak gepeng
       document.querySelector("header").style.minHeight = "40px";
       document.querySelector("header").style.padding = "12px 24px";

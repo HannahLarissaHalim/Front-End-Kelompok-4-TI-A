@@ -43,6 +43,9 @@
       <!-- tombol tambah cerita baru -->
       <div class="header-right">
         <button id="btnTambahCerita">+ Tambah Cerita</button>
+        
+        <!-- tombol tambah catatan (disembunyikan default) -->
+        <button id="btnTambahCatatan" onclick="openNoteModal()">+ Tambah Catatan</button>
       </div>
     </header>
 
@@ -80,6 +83,23 @@
 
         <!-- tombol simpan (submit form) -->
         <button type="submit" id="submitCerita">Simpan Cerita</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL TAMBAH CATATAN -->
+  <div id="modalCatatan" class="modal">
+    <div class="modal-content">
+      <span id="closeModalCatatan">&times;</span>
+      <h3 id="modalTitleCatatan">Tambah Catatan</h3>
+      <form id="formCatatan">
+        <label for="judulCatatan">Judul Catatan:</label>
+        <input type="text" id="judulCatatan" placeholder="Masukkan judul catatan" required>
+
+        <label for="isiCatatan">Isi Catatan:</label>
+        <textarea id="isiCatatan" rows="6" placeholder="Tulis isi catatan di sini..." required></textarea>
+
+        <button type="submit" id="submitCatatan">Simpan Catatan</button>
       </form>
     </div>
   </div>

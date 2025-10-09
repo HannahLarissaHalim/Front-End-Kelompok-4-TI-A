@@ -102,12 +102,18 @@ function viewStory(id) {
   document.querySelector(".sidebar").style.display = "none";
   document.querySelector("header").style.display = "none";
 
-  // tambahkin kelas CSS 
+  // tambahkin kelas CSS untuk aktifin fullscreen/mode baca
   const main = document.querySelector("main");
   main.classList.add("fullscreen-mode");
 
   const container = document.getElementById("ceritaContainer");
   container.classList.add("fullscreen-container");
+
+  // fallback untuk gambar dan isi
+  const isiCerita = story.isi ? story.isi.replace(/\n/g, '<br>') : "(Belum ada isi cerita)";
+  const gambarCerita = story.gambar && story.gambar.trim() !== "" ? story.gambar : "images/default.jpg";
+  const judulCerita = story.judul || "(Tanpa Judul)";
+  const daerahCerita = story.daerah || "(Tidak diketahui)";
 
   // render tampilan fullscreen
   // ganti isi container jadi tampilan khusus mode baca
@@ -127,10 +133,10 @@ function viewStory(id) {
       <!-- tombol2 -->
       <div class="fullscreen-buttons">
         <button onclick="addFavorite(${story.id})">Favorit</button>
-        <button onclick="addBookmark(${story.id})">Simpan</button>
-        <button onclick="addRead(${story.id})">Tandai Dibaca</button>
-        <button onclick="openEditModal(${story.id})">Edit</button>
-        <button onclick="deleteStory(${story.id})">Hapus</button>
+        <button onclick="addBookmark(${story.id})">Bookmark</button>
+        <button onclick="addRead(${story.id})">Tandai Sudah Dibaca</button>
+        <button onclick="openEditModal(${story.id})">Edit Cerita</button>
+        <button onclick="deleteStory(${story.id})">Hapus Cerita</button>
       </div>
     </div>
   `;

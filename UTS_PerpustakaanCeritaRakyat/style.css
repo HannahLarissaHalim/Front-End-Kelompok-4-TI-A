@@ -180,7 +180,9 @@ header {
   flex-direction: column;
   justify-content: space-between; 
   transition: transform 0.3s, box-shadow 0.3s;
-  height: 210px; 
+  height: auto; 
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .cerita-card:hover {
@@ -202,7 +204,7 @@ header {
   gap: 14px;
   align-items: flex-start;
   margin-top: 8px;       
-  margin-bottom: -6px;   
+  margin-bottom: 0px;   
 }
 
 /* gambar ilustrasi cerita dalam card */
@@ -849,13 +851,30 @@ header {
 
 /* responsive design */
 @media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    z-index: 1100;
+    background: none;
+    border: none;
+    color: #F4EFE6;
+    font-size: 1.6rem;
+    cursor: pointer;
+  }
+
   .sidebar { 
+    display: flex;
     width: 100%;
     height: auto;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px 15px; 
+    align-items: center;
+    padding: 10px 14px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
 
   .sidebar h2, .sidebar li span { 
@@ -863,38 +882,97 @@ header {
   }
 
   .sidebar .logo h2 {
-    font-size: 1.2rem;
-    text-align: left;
+    display: block;
+    font-size: 1.05rem;
+    line-height: 1.2;
     margin: 0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    overflow: hidden;
+  }
+
+  .logo {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 10px;
   }
 
   .navigation-links {
+    display: none;
+    position: fixed;           
+    top: 60px;                  
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(82, 61, 45, 0.98); 
+    padding: 10px 0;
+    margin: 0;
+    z-index: 1200;              
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    animation: slideDown 0.25s ease;
+  }
+
+  .navigation-links.active {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    width: auto;
   }
 
   .navigation-links li {
-    padding: 8px 10px;
-    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    font-size: 1rem;
+    color: #F4EFE6; /* readable text */
+    background: transparent;
     border-radius: 6px;
   }
 
+  .navigation-links li:hover {
+    background: rgba(244, 239, 230, 0.2);
+  }
+
+  .navigation-links li span {
+    display: inline;
+    margin-left: 6px;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   main { 
-    margin-left: 70px; 
-    padding: 15px; 
+    margin-left: 0;
+    margin-top: 64px; 
+    padding: 12px;
+    width: 100%;
+  }
+
+  .cerita-container {
+    justify-content: center;
+  }
+
+  .cerita-card {
+    max-width: 520px;
+    width: calc(100% - 32px); 
   }
 
   .card-top { 
-    flex-direction: column; 
-    align-items: center; 
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .card-top img { 
-    width: 80%; 
-    height: auto; 
+    width: 120px;
+    height: 180px;
+    margin: 10px 0;
   }
 
   .baca-wrapper h2 { 

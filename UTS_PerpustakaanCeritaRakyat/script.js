@@ -251,6 +251,36 @@ function loadDaftarDaerah() {
   });
 }
 
+// membuat toggle menu dalam screen mobile
+const menuToggle = document.getElementById("menu-toggle");
+const links = document.querySelector(".navigation-links");
+
+if (menuToggle && links) {
+  menuToggle.addEventListener('click', () => {
+    links.classList.toggle('active');
+
+    const expanded = links.classList.contains('active');
+    menuToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+
+  // mentutup menu ketika item navigasi diklik
+  links.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        links.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // menghapus menu ketika screen berubah ke desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      links.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
 
 // FITUR SEARCH & FILTER BERDASARKAN DAERAH
 

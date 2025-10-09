@@ -43,6 +43,7 @@ async function loadStories() {
 
 // FUNCTION RENDERSTORIES 
 // UNTUK RENDER CARD CERITA
+// membentuk tampilan utama halaman beranda
 // parameter list itu data cerita yang mau ditampilkan saat itu
 function renderStories(list) {
   // matikan mode baca 
@@ -142,6 +143,88 @@ function viewStory(id) {
   `;
 }
 
+
+// FUNCTION ADDFAVORITE
+// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR FAVORIT
+function addFavorite(id) {
+  // apakah cerita ada di favorit
+  if (!favorites.includes(id)) {
+    favorites.push(id);                                           // kalo belum ada di favorit, tambahin id-nya
+    localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan ke localstorage
+    alert("Cerita ditambahkan ke Favorit!");
+  } else {
+    alert("Cerita ini sudah ada di Favorit.");
+  }
+}
+
+// FUNCTION ADDBOOKMARK
+// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR BOOKMARK
+function addBookmark(id) {
+  // apakah cerita ada di bookmark
+  if (!bookmarks.includes(id)) {
+    bookmarks.push(id);                                           // kalau belum ada, tambahkan id ke daftar bookmark
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); // simpan ke localstorage
+    alert("Cerita disimpan ke Bookmark!");
+  } else {
+    alert("Cerita ini sudah ada di Bookmark.");
+  }
+}
+
+// FUNCTION ADDREAD
+// BUAT NANDAIN KALO CERITA UDAH DIBACA
+function addRead(id) {
+  const story = stories.find(s => s.id === id); // cari cerita yang id-nya sama kayak yang diklik user
+
+  // apakah ceritanya ketemu dan belum ditandai dibaca
+  if (story && !story.dibaca) {
+    story.dibaca = true;
+    alert(`Cerita "${story.judul}" ditandai sudah dibaca.`);
+  } else if (story) {
+    alert(`Cerita "${story.judul}" sudah ditandai dibaca.`);
+  }
+}
+
+// FUNCTION ADDNOTE
+// BUAT TAMBAHIN CATATAN PRIBADI
+function addNote(id, isiCatatan) {
+  notes[id] = isiCatatan;                               // simpan catatan di object notes dengan key = id cerita
+  localStorage.setItem("notes", JSON.stringify(notes)); // update localStorage biar catatan gak hilang pas refresh
+}
+
+// CATATAN PRIBADI (HALAMAN KHUSUS)
+function renderNotes() {
+  const container = document.getElementById("ceritaContainer"); // ambil elemen HTML yang punya id="ceritaContainer"
+  container.innerHTML = "";                 
+
+  // kalo belum ada catatan yang disimpan
+  if (Object.keys(notes).length === 0) {
+    container.innerHTML += `<p class="empty-message">Tidak ada catatan.</p>`;
+    return; // keluar dari fungsi
+  }
+
+  Object.entries(notes).forEach(([id, content]) => {
+    const [judul, ...isi] = content.split("\n");
+    const div = document.createElement("div");
+    div.classList.add("note-card");
+    div.innerHTML = `
+      <div class="note-header">
+        <h3>${judul}</h3>
+        <button class="btn-delete-note" onclick="deleteNote(${id})">Hapus</button>
+      </div>
+      <p>${isi.join("\n")}</p>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// HAPUS CATATAN
+function deleteNote(id) {
+  if (confirm("Yakin ingin menghapus catatan ini?")) {
+    delete notes[id];
+    localStorage.setItem("notes", JSON.stringify(notes));
+    renderNotes();
+  }
+}
 
 // FUNCTION REMOVEFROMFAVORITES
 // HAPUS CERITA DARI DAFTAR FAVORIT
@@ -251,6 +334,7 @@ function loadDaftarDaerah() {
   });
 }
 
+
 // membuat toggle menu dalam screen mobile
 const menuToggle = document.getElementById("menu-toggle");
 const links = document.querySelector(".navigation-links");
@@ -282,6 +366,7 @@ if (menuToggle && links) {
   });
 }
 
+
 // FITUR SEARCH & FILTER BERDASARKAN DAERAH
 
 // event saat user ketik di search bar
@@ -307,7 +392,6 @@ document.getElementById("filter-daerah").addEventListener("change", (e) => {
   if (val === "all") renderStories(stories);                 // kalau user pilih semua daerah tampilkan semua cerita
   else renderStories(stories.filter(s => s.daerah === val)); // kalau gak, tampilkan cerita berdasarkan daerah yang dipilih
 });
-
 
 
 // FITUR TAMBAH CERITA BARU
@@ -367,7 +451,6 @@ document.getElementById("formCerita").addEventListener("submit", (e) => {
 });
 
 
-
 // FUNCTION OPENEDIT MODAL
 // UNTUK EDIT CERITA
 function openEditModal(id) {
@@ -385,112 +468,6 @@ function openEditModal(id) {
   currentStoryId = id; // simpan ID cerita yang sedang diedit
 }
 
-
-// FUNCTION DELETESTORY
-// UNTUK HAPUS CERITA 
-function deleteStory(id) {
-  if (confirm("Apakah kamu yakin ingin menghapus cerita ini? Cerita akan dipindahkan ke Recycle Bin.")) { // popup konfirmasi
-  
-    const deleted = stories.find(s => s.id === id); // cari cerita yang mau dihapus berdasarkan ID
-
-    // kalo ketemu, pindahin ke recycle bin
-    if (deleted && !deletedStories.some(s => s.id === deleted.id)) {
-      deletedStories.push(deleted);
-      localStorage.setItem("deletedStories", JSON.stringify(deletedStories));
-    }
-
-    // hapus cerita dr daftar utama
-    stories = stories.filter(s => s.id !== id);
-    localStorage.setItem("stories", JSON.stringify(stories));
-
-    renderStories(stories); // tampilin ulang
-  }
-}
-
-
-// FUNCTION ADDFAVORITE
-// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR FAVORIT
-function addFavorite(id) {
-  // apakah cerita ada di favorit
-  if (!favorites.includes(id)) {
-    favorites.push(id);                                           // kalo belum ada di favorit, tambahin id-nya
-    localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan ke localstorage
-    alert("Cerita ditambahkan ke Favorit!");
-  } else {
-    alert("Cerita ini sudah ada di Favorit.");
-  }
-}
-
-
-// FUNCTION ADDBOOKMARK
-// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR BOOKMARK
-function addBookmark(id) {
-  // apakah cerita ada di bookmark
-  if (!bookmarks.includes(id)) {
-    bookmarks.push(id);                                           // kalau belum ada, tambahkan id ke daftar bookmark
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); // simpan ke localstorage
-    alert("Cerita disimpan ke Bookmark!");
-  } else {
-    alert("Cerita ini sudah ada di Bookmark.");
-  }
-}
-
-
-// FUNCTION ADDREAD
-// BUAT NANDAIN KALO CERITA UDAH DIBACA
-function addRead(id) {
-  const story = stories.find(s => s.id === id); // cari cerita yang id-nya sama kayak yang diklik user
-
-  // apakah ceritanya ketemu dan belum ditandai dibaca
-  if (story && !story.dibaca) {
-    story.dibaca = true;
-    alert(`Cerita "${story.judul}" ditandai sudah dibaca.`);
-  } else if (story) {
-    alert(`Cerita "${story.judul}" sudah ditandai dibaca.`);
-  }
-}
-
-// FUNCTION ADDNOTE
-// BUAT TAMBAHIN CATATAN PRIBADI
-function addNote(id, isiCatatan) {
-  notes[id] = isiCatatan;                               // simpan catatan di object notes dengan key = id cerita
-  localStorage.setItem("notes", JSON.stringify(notes)); // update localStorage biar catatan gak hilang pas refresh
-}
-
-// CATATAN PRIBADI (HALAMAN KHUSUS)
-function renderNotes() {
-  const container = document.getElementById("ceritaContainer"); // ambil elemen HTML yang punya id="ceritaContainer"
-  container.innerHTML = "";                 
-
-  // kalo belum ada catatan yang disimpan
-  if (Object.keys(notes).length === 0) {
-    container.innerHTML += `<p class="empty-message">Tidak ada catatan.</p>`;
-    return; // keluar dari fungsi
-  }
-
-  Object.entries(notes).forEach(([id, content]) => {
-    const [judul, ...isi] = content.split("\n");
-    const div = document.createElement("div");
-    div.classList.add("note-card");
-    div.innerHTML = `
-      <div class="note-header">
-        <h3>${judul}</h3>
-        <button class="btn-delete-note" onclick="deleteNote(${id})">Hapus</button>
-      </div>
-      <p>${isi.join("\n")}</p>
-    `;
-    container.appendChild(div);
-  });
-}
-
-// HAPUS CATATAN
-function deleteNote(id) {
-  if (confirm("Yakin ingin menghapus catatan ini?")) {
-    delete notes[id];
-    localStorage.setItem("notes", JSON.stringify(notes));
-    renderNotes();
-  }
-}
 
 // FITUR TAMBAH CATATAN 
 const modalCatatan = document.getElementById("modalCatatan");
@@ -544,6 +521,26 @@ function showStats() {
   `;
 }
 
+// FUNCTION DELETESTORY
+// UNTUK HAPUS CERITA 
+function deleteStory(id) {
+  if (confirm("Apakah kamu yakin ingin menghapus cerita ini? Cerita akan dipindahkan ke Recycle Bin.")) { // popup konfirmasi
+  
+    const deleted = stories.find(s => s.id === id); // cari cerita yang mau dihapus berdasarkan ID
+
+    // kalo ketemu, pindahin ke recycle bin
+    if (deleted && !deletedStories.some(s => s.id === deleted.id)) {
+      deletedStories.push(deleted);
+      localStorage.setItem("deletedStories", JSON.stringify(deletedStories));
+    }
+
+    // hapus cerita dr daftar utama
+    stories = stories.filter(s => s.id !== id);
+    localStorage.setItem("stories", JSON.stringify(stories));
+
+    renderStories(stories); // tampilin ulang
+  }
+}
 
 // RECYCLE BIN
 // UNTUK NAMPILIN CERITA YANG SUDAH DIHAPUS (TEMPAT PENYIMPANAN SEMENTARA)
@@ -585,7 +582,6 @@ function showRecycleBin() {
   });
   container.appendChild(recycleContainer); // tampilkan recycle container di halaman
 }
-
 
 // FUNCTION RESTORESTORY
 // BUAT RESTORE CERITA YANG ADA DI RECYCLE BIN

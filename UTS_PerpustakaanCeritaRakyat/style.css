@@ -603,6 +603,123 @@ header button:hover {
   background-color: #6A5040;
 }
 
+/* === RECYCLE BIN (disamakan dengan card utama) === */
+.recycle-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin-top: 30px;
+}
+
+/* kartu di recycle bin */
+.recycle-card {
+  flex: 1 1 300px;
+  max-width: 320px;
+  background: rgba(253, 248, 242, 0.65);
+  border: 1px solid rgba(82, 61, 45, 0.15);
+  border-radius: 14px;
+  padding: 12px 16px 10px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 210px;
+}
+
+.recycle-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+}
+
+/* bagian atas card: gambar + teks */
+.recycle-card .card-top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 8px;
+  margin-bottom: -6px;
+}
+
+/* gambar */
+.recycle-card img {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #E0D4C6;
+  flex-shrink: 0;
+}
+
+/* teks judul & daerah */
+.recycle-card .card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.recycle-card .card-info h3 {
+  margin: 0;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.recycle-card .card-info p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* tombol di bawah */
+/* tombol di dalam recycle bin */
+.recycle-card .card-buttons {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 15px;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+/* tombol umum */
+.recycle-card .card-buttons button {
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.3s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+/* tombol pertama = Pulihkan (sama kayak tombol Baca Cerita) */
+.recycle-card .card-buttons button:first-child {
+  width: 105px;
+  height: 34px;
+  padding: 8px 0;
+}
+
+/* tombol kedua = Hapus Permanen (sama kayak tombol Hapus dari ...) */
+.recycle-card .card-buttons button:nth-child(2) {
+  width: 170px;
+  height: 34px;
+  padding: 8px 0;
+}
+
+/* hover effect */
+.recycle-card .card-buttons button:hover {
+  background-color: #6A5040;
+  transform: translateY(-1px);
+}
+
+
 /* pesan tidak ada cerita/catatan */
 .empty-message {
   grid-column: 1 / -1;

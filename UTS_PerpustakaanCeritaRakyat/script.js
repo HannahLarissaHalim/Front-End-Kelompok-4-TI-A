@@ -251,6 +251,36 @@ function loadDaftarDaerah() {
   });
 }
 
+// membuat toggle menu dalam screen mobile
+const menuToggle = document.getElementById("menu-toggle");
+const links = document.querySelector(".navigation-links");
+
+if (menuToggle && links) {
+  menuToggle.addEventListener('click', () => {
+    links.classList.toggle('active');
+
+    const expanded = links.classList.contains('active');
+    menuToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+
+  // mentutup menu ketika item navigasi diklik
+  links.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        links.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // menghapus menu ketika screen berubah ke desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      links.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
 
 // FITUR SEARCH & FILTER BERDASARKAN DAERAH
 
@@ -438,23 +468,59 @@ function renderNotes() {
     return; // keluar dari fungsi
   }
 
-  // tampilkan semua catatan yang ada
-  // looping untuk semua catatan yang tersimpan
-  Object.keys(notes).forEach(id => {
-    const story = stories.find(s => s.id == id); // cari cerita dari array stories yang idnya sama dengan id catatan
-    const div = document.createElement("div");   // buat elemen card baru
-    div.classList.add("cerita-card");            // kasih class CSS
-
-    // masukkan isi HTML ke dalam div
+  Object.entries(notes).forEach(([id, content]) => {
+    const [judul, ...isi] = content.split("\n");
+    const div = document.createElement("div");
+    div.classList.add("note-card");
     div.innerHTML = `
-      <!-- headernya kalau cerita udah dihapus -->
-      <h3>${story ? story.judul : "(Cerita sudah dihapus)"}</h3>
-      <!-- tempat tulis catatan -->
-      <textarea rows="4" onchange="addNote(${id}, this.value)">${notes[id]}</textarea>
+      <div class="note-header">
+        <h3>${judul}</h3>
+        <button class="btn-delete-note" onclick="deleteNote(${id})">Hapus</button>
+      </div>
+      <p>${isi.join("\n")}</p>
     `;
-    container.appendChild(div); // tambahkan card ke halaman
+    container.appendChild(div);
   });
 }
+
+// HAPUS CATATAN
+function deleteNote(id) {
+  if (confirm("Yakin ingin menghapus catatan ini?")) {
+    delete notes[id];
+    localStorage.setItem("notes", JSON.stringify(notes));
+    renderNotes();
+  }
+}
+
+// ======================= FITUR TAMBAH CATATAN ===========================
+const modalCatatan = document.getElementById("modalCatatan");
+const closeModalCatatan = document.getElementById("closeModalCatatan");
+
+// buka modal
+function openNoteModal() {
+  modalCatatan.style.display = "flex";
+  document.getElementById("formCatatan").reset();
+}
+
+// tutup modal
+closeModalCatatan.addEventListener("click", () => {
+  modalCatatan.style.display = "none";
+});
+
+// submit form catatan
+document.getElementById("formCatatan").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const judul = document.getElementById("judulCatatan").value;
+  const isi = document.getElementById("isiCatatan").value;
+
+  const id = Date.now(); // id unik
+  notes[id] = `${judul}\n${isi}`;
+  localStorage.setItem("notes", JSON.stringify(notes));
+
+  modalCatatan.style.display = "none";
+  renderNotes();
+});
 
 
 // FUNCTION SHOWSTATS
@@ -573,12 +639,20 @@ document.querySelectorAll(".navigation-links li").forEach(li => {
 // FUNCTION SHOWSECTION
 // NENTUIN HALAMAN MANA YANG MAU DITAMPILIN BERDASARKAN MENU YANG DIKLIK USER
 function showSection(section) {
-  const btnTambah = document.getElementById("btnTambahCerita"); // ambil tombol tambah cerita buat nanti dihilangin
+  const btnTambahCerita = document.getElementById("btnTambahCerita");
+  const btnTambahCatatan = document.getElementById("btnTambahCatatan");
+  const searchInput = document.getElementById("searchInput");
+  const filterDaerah = document.getElementById("filter-daerah");
+
+  // default: semua tampil normal
+  btnTambahCerita.style.display = "inline-block";
+  btnTambahCatatan.style.display = "none";
+  searchInput.style.display = "inline-block";
+  filterDaerah.style.display = "inline-block";
 
   switch (section) {
     case "home":
       renderStories(stories);
-      btnTambah.style.display = "block";
       break;
 
     case "favorites":
@@ -587,7 +661,7 @@ function showSection(section) {
         "Favorit",
         removeFromFavorites
       );
-      btnTambah.style.display = "none";
+      btnTambahCerita.style.display = "none";
       break;
 
     case "bookmarks":
@@ -596,7 +670,7 @@ function showSection(section) {
         "Bookmark",
         removeFromBookmarks
       );
-      btnTambah.style.display = "none";
+      btnTambahCerita.style.display = "none";
       break;
 
     case "read":
@@ -605,25 +679,42 @@ function showSection(section) {
         "Sudah Dibaca",
         removeFromRead
       );
-      btnTambah.style.display = "none";
+      btnTambahCerita.style.display = "none";
       break;
 
     case "notes":
       renderNotes();
-      btnTambah.style.display = "none";
+      
+      // tampilkan tombol catatan
+      btnTambahCerita.style.display = "none";
+      btnTambahCatatan.style.display = "inline-block";
+
+      // sembunyikan search dan filter
+      searchInput.style.display = "none";
+      filterDaerah.style.display = "none";
       break;
 
     case "stats":
       showStats();
-      btnTambah.style.display = "none";
+      btnTambahCerita.style.display = "none";
+
+      // sembunyikan search dan filter 
+      document.getElementById("searchInput").style.display = "none";
+      document.getElementById("filter-daerah").style.display = "none";
+
+      // kasih tinggi tetap biar header gak gepeng
+      document.querySelector("header").style.minHeight = "40px";
+      document.querySelector("header").style.padding = "12px 24px";
+      header.style.justifyContent = "center";
       break;
 
     case "recycle-bin":
       showRecycleBin();
-      btnTambah.style.display = "none";
+      btnTambahCerita.style.display = "none";
       break;
   }
 }
+
 
 // INISIALISASI
 // FUNGSI INI JALAN OTOMATIS WAKTU HALAMAN PERTAMA KALI DIBUKA

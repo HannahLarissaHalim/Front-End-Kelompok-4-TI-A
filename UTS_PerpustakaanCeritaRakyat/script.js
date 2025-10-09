@@ -462,7 +462,7 @@ function deleteNote(id) {
   }
 }
 
-// ======================= FITUR TAMBAH CATATAN ===========================
+// FITUR TAMBAH CATATAN 
 const modalCatatan = document.getElementById("modalCatatan");
 const closeModalCatatan = document.getElementById("closeModalCatatan");
 

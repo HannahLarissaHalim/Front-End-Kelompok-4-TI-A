@@ -1,11 +1,9 @@
-// array untuk menyimpan daftar cerita dari JSON
-let stories = [];
+// data utama 
+// buat nyimpen semua cerita dan hasil filter
+let stories = [];           // array untuk menyimpan daftar cerita dari JSON
+let filteredStories = [];   // array untuk kalau lagi filtering atau searching
+let currentStoryId = null;  // menyimpan ID cerita yang sedang diedit
 
-// array yang digunakan saat filter atau pencarian aktif
-let filteredStories = [];
-
-// menyimpan ID cerita yang sedang diedit
-let currentStoryId = null;
 
 // menyimpan id cerita di localStorage agar tetap ada setelah refresh
 // ambil data dulu dari localStorage lalu parsing biar jadi objek
@@ -14,45 +12,52 @@ let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 let notes = JSON.parse(localStorage.getItem("notes")) || {};          // simpan dalam bentuk objek key(id cerita) value(isi catatan)
 let deletedStories = JSON.parse(localStorage.getItem("deletedStories")) || [];
 
-// FUNCTION UNTUK LOAD DATA CERITA YANG ADA DI JSON
+
+// FUNCTION LOADSTORIES 
+// UNTUK LOAD SEMUA CERITA YANG ADA DI JSON
 async function loadStories() {
   try {
-    // ambil data dari file JSON 
-    const response = await fetch("data_cerita.json");
-    const data = await response.json();
+    // apakah ada data cerita yang udah pernah disimpan di localstorage
+    const savedStories = JSON.parse(localStorage.getItem("stories"));
+    
+    // kalau ada dan gak kosong, langsung pake 
+    if (savedStories && savedStories.length > 0) {
+      stories = savedStories;
+    } else {
+      // kalau belum ada, fetch dari file json
+      const response = await fetch("data_cerita.json");
+      const data = await response.json();
+      stories = data;
 
-    // simpan hasil ke array stories
-    stories = data;
-    filteredStories = [...stories];
+      localStorage.setItem("stories", JSON.stringify(stories)); // simpan ke localstorage 
+    }
 
-    // tampilkan cerita di halaman (panggil function renderStories)
-    renderStories(stories);
-
-    // isi dropdown filter berdasarkan daerah yang ada (panggil function populateFilterOptions)
-    loadDaftarDaerah();
+    filteredStories = [...stories]; // setelah data siap, duplikat ke filteredStories utk kebutuhan search/filter
+    renderStories(stories);         // tampilkan semua cerita ke halaman
+    loadDaftarDaerah();             // isi dropdown filter daerah 
   } catch (err) {
-    console.error("gagal memuat cerita", err); // kalau gagal tampilkan error di console
+    console.error("gagal memuat cerita", err); 
   }
 }
 
-// FUNGSI UNTUK RENDER CARD CERITA
-// parameter list itu data cerita yang mau ditampilkan saat itu.
+
+// FUNCTION RENDERSTORIES 
+// UNTUK RENDER CARD CERITA
+// parameter list itu data cerita yang mau ditampilkan saat itu
 function renderStories(list) {
-  // matikan mode baca dimatikan
+  // matikan mode baca 
   document.querySelector(".sidebar").style.display = "flex";
   document.querySelector("header").style.display = "flex";
   document.querySelector("main").classList.remove("fullscreen-mode");
   document.getElementById("ceritaContainer").classList.remove("fullscreen-container");
 
-  // ambil elemen <section id="ceritaContainer">
-  const container = document.getElementById("ceritaContainer");
-
-  // kosongkan dulu containernya biar saat render ulang gak ke double
-  container.innerHTML = "";
+  
+  const container = document.getElementById("ceritaContainer"); // ambil elemen <section id="ceritaContainer">
+  container.innerHTML = "";                                     // kosongkan dulu containernya biar saat render ulang gak ke double
 
   // kalo gak ada cerita yang cocok dengan filter/search
   if (list.length === 0) {
-    container.innerHTML = "<p>Tidak ada cerita.(</p>";
+    container.innerHTML = "<p class='empty-message'>Tidak ada cerita.</p>";
     return;
   }
 
@@ -80,19 +85,18 @@ function renderStories(list) {
       </div>
     `;
 
-    // tambahkan ke halaman
-    container.appendChild(card);
+    container.appendChild(card); // tambahkan ke halaman
   });
 }
 
-// FUNCTION UNTUK MASUK KE MODE BACA CERITA
+
+// FUNCTION VIEWSTORY
+// UNTUK MASUK KE MODE BACA CERITA
 // parameternya id berasal dari tombol yang diklik user <button onclick="viewStory(${story.id})">
 function viewStory(id) {
-  // cari cerita berdasarkan ID
-  const story = stories.find((s) => s.id === id);
-
-  // kalo gak ketemu fungsinya berhenti 
-  if (!story) return;
+  
+  const story = stories.find((s) => s.id === id); // cari cerita berdasarkan ID
+  if (!story) return;                             // kalo gak ketemu fungsinya berhenti 
 
   // sembunyikan sidebar & header
   document.querySelector(".sidebar").style.display = "none";
@@ -132,36 +136,51 @@ function viewStory(id) {
   `;
 }
 
+
+// FUNCTION REMOVEFROMFAVORITES
+// HAPUS CERITA DARI DAFTAR FAVORIT
 function removeFromFavorites(id) {
-  favorites = favorites.filter(f => f !== id);
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  showSection("favorites"); 
+  favorites = favorites.filter(f => f !== id);                  // filter id yang bukan cerita ini
+  localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan ulang hasilnya ke localstorage
+  showSection("favorites");                                     // refresh halaman
 }
 
+// FUNCTION REMOVEFROMBOOKMARK
+// HAPUS CERITA DARI DAFTAR BOOKMARK
 function removeFromBookmarks(id) {
   bookmarks = bookmarks.filter(b => b !== id);
   localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   showSection("bookmarks");
 }
 
+// FUNCTION REMOVEFROMREAD
+// HAPUS DARI STATUS SUDAH DIBACA
 function removeFromRead(id) {
-  const story = stories.find(s => s.id === id);
-  if (story) story.dibaca = false; 
-  showSection("read");
+  const story = stories.find(s => s.id === id); // cari cerita sesuai id
+  if (story) story.dibaca = false;              // kalau ketemu, ubah flag dibaca jadi false 
+  showSection("read");                          // refresh halaman 
 }
 
+
+// FUNCTION SHOWCARDSBYCATEGORY
+// BUAT NAMPILIN DAFTAR KARTU SESUAI KATEGORI (FAVORIT, BOOKMARK, ATAU DIBACA)
 function showCardsByCategory(list, type, removeFunction) {
   const container = document.getElementById("ceritaContainer");
   container.innerHTML = "";
 
+  // kalau list-nya kosong,
   if (list.length === 0) {
     container.innerHTML += `<p class="empty-message">Tidak ada cerita.</p>`;
     return;
   }
 
+  // looping tiap cerita di list
   list.forEach(story => {
+    // buat elemen artikel untuk setiap cerita
     const card = document.createElement("article");
     card.classList.add("cerita-card");
+
+    // isi struktur html card-nya
     card.innerHTML = `
       <div class="card-top">
         <img src="${story.gambar}" alt="${story.judul}">
@@ -175,10 +194,12 @@ function showCardsByCategory(list, type, removeFunction) {
         <button onclick="${removeFunction.name}(${story.id})">Hapus dari ${type}</button>
       </div>
     `;
-    container.appendChild(card);
+    container.appendChild(card); // tambahkan kartu ke container utama
   });
 }
 
+
+// FUNCTION EXITREADMODE
 // FUNCTION UNTUK KELUAR DARI MODE BACA CERITA 
 function exitReadMode() {
   // ambil elemen sidebar, header, main, container cerita
@@ -198,15 +219,16 @@ function exitReadMode() {
   main.classList.remove("fullscreen-mode");
   container.classList.remove("fullscreen-container");
 
-   // kosongkan container dan tampilin ulang daftar cerita
+  // kosongkan container dan tampilin ulang daftar cerita
   container.innerHTML = "";
   renderStories(stories); 
 
-  // scroll ke atas
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: "smooth" }); // scroll ke atas
 }
 
-// FUNCTION UNTUK MENGISI DROPDOWN DAERAH UNTUK FITUR FILTERING
+
+// FUNCTION LOADDAFTARDAERAH
+// UNTUK MENGISI DROPDOWN DAERAH UNTUK FITUR FILTERING
 function loadDaftarDaerah() {
   // ambil elemen <select> dari HTML yang ada id="filter-daerah".
   const filterSelect = document.getElementById("filter-daerah");
@@ -222,6 +244,7 @@ function loadDaftarDaerah() {
     filterSelect.appendChild(option);                // masukkan <option> ke <select id="filter-daerah">
   });
 }
+
 
 // FITUR SEARCH & FILTER BERDASARKAN DAERAH
 
@@ -239,6 +262,7 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   renderStories(filteredStories); // tampilin hasil filter ke halaman
 });
 
+
 // event saat user memilih filter daerah
 document.getElementById("filter-daerah").addEventListener("change", (e) => {
 
@@ -249,6 +273,7 @@ document.getElementById("filter-daerah").addEventListener("change", (e) => {
 });
 
 
+
 // FITUR TAMBAH CERITA BARU
 const modal = document.getElementById("modalCerita");         // ambil elemen modal (popup form tambah/edit)
 const btnTambah = document.getElementById("btnTambahCerita"); // ambil tombol tambah cerita
@@ -256,14 +281,10 @@ const closeModal = document.getElementById("closeModal");     // ambil tombol me
 
 // event saat user klik tombol tambah cerita
 btnTambah.addEventListener("click", () => {
-
-  modal.style.display = "flex"; // tampilkan modal dgn display flex spy muncul di tengah
-
+  modal.style.display = "flex";                                             // tampilkan modal dgn display flex spy muncul di tengah
   document.getElementById("modalTitle").textContent = "Tambah Cerita Baru"; // ubah judul modal
-
-  currentStoryId = null; // reset ID karena ini nambah cerita baru
-
-  document.getElementById("formCerita").reset(); // kosongin semua input di form
+  currentStoryId = null;                                                    // reset ID karena ini nambah cerita baru
+  document.getElementById("formCerita").reset();                            // kosongin semua input di form
 });
 
 // event saat user klik tombol menutup modal
@@ -301,14 +322,18 @@ document.getElementById("formCerita").addEventListener("submit", (e) => {
       isi,
       dibaca: false
     };
-    stories.push(newStory);     // tambahin ke array stories
+    stories.push(newStory); // tambahin ke array stories
   }
 
-  modal.style.display = "none"; // tutup modal kalo data udah disimpan
-  renderStories(stories);       // tampilin ulang
+  modal.style.display = "none";                             // tutup modal kalo data udah disimpan
+  renderStories(stories);                                   // tampilin ulang
+  localStorage.setItem("stories", JSON.stringify(stories)); // tampilin ulang
 });
 
-// FUNCTION UNTUK EDIT CERITA
+
+
+// FUNCTION OPENEDIT MODAL
+// UNTUK EDIT CERITA
 function openEditModal(id) {
   const story = stories.find(s => s.id === id); // cari cerita berdasarkan ID yang diklik user
   if (!story) return;                           // kalau gak ditemukan, hentikan fungsi
@@ -324,57 +349,63 @@ function openEditModal(id) {
   currentStoryId = id; // simpan ID cerita yang sedang diedit
 }
 
-// FUNCTION UNTUK HAPUS CERITA 
-function deleteStory(id) {
 
-  // popup konfirmasi
-  if (confirm("Apakah kamu yakin ingin menghapus cerita ini? Cerita akan dipindahkan ke Recycle Bin.")) {
-    
-    // cari cerita yang mau dihapus berdasarkan ID
-    const deleted = stories.find(s => s.id === id);
+// FUNCTION DELETESTORY
+// UNTUK HAPUS CERITA 
+function deleteStory(id) {
+  if (confirm("Apakah kamu yakin ingin menghapus cerita ini? Cerita akan dipindahkan ke Recycle Bin.")) { // popup konfirmasi
+  
+    const deleted = stories.find(s => s.id === id); // cari cerita yang mau dihapus berdasarkan ID
 
     // kalo ketemu, pindahin ke recycle bin
-    if (deleted) {
-      deletedStories.push(deleted);                                           // masukin ke array deletedStories
-      localStorage.setItem("deletedStories", JSON.stringify(deletedStories)); // simpan ke localStorage biar gak ilang pas refresh
+    if (deleted && !deletedStories.some(s => s.id === deleted.id)) {
+      deletedStories.push(deleted);
+      localStorage.setItem("deletedStories", JSON.stringify(deletedStories));
     }
 
     // hapus cerita dr daftar utama
     stories = stories.filter(s => s.id !== id);
+    localStorage.setItem("stories", JSON.stringify(stories));
 
-    // tampilin ulang
-    renderStories(stories);
+    renderStories(stories); // tampilin ulang
   }
 }
 
-// FUNCTION FAVORITE
-// buat tambahin atau hapus cerita dari daftar favorit
+
+// FUNCTION ADDFAVORITE
+// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR FAVORIT
 function addFavorite(id) {
+  // apakah cerita ada di favorit
   if (!favorites.includes(id)) {
-    favorites.push(id);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    favorites.push(id);                                           // kalo belum ada di favorit, tambahin id-nya
+    localStorage.setItem("favorites", JSON.stringify(favorites)); // simpan ke localstorage
     alert("Cerita ditambahkan ke Favorit!");
   } else {
     alert("Cerita ini sudah ada di Favorit.");
   }
 }
 
-// FUNCTION BOOKMARK
-// buat tambahin atau hapus cerita dari daftar disimpan (bookmark)
+
+// FUNCTION ADDBOOKMARK
+// BUAT TAMBAHIN ATAU HAPUS CERITA DARI DAFTAR BOOKMARK
 function addBookmark(id) {
+  // apakah cerita ada di bookmark
   if (!bookmarks.includes(id)) {
-    bookmarks.push(id);
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    bookmarks.push(id);                                           // kalau belum ada, tambahkan id ke daftar bookmark
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); // simpan ke localstorage
     alert("Cerita disimpan ke Bookmark!");
   } else {
     alert("Cerita ini sudah ada di Bookmark.");
   }
 }
 
-// FUNCTION MARKASREAD
-// buat tandain kalo cerita udah dibaca
+
+// FUNCTION ADDREAD
+// BUAT NANDAIN KALO CERITA UDAH DIBACA
 function addRead(id) {
-  const story = stories.find(s => s.id === id);
+  const story = stories.find(s => s.id === id); // cari cerita yang id-nya sama kayak yang diklik user
+
+  // apakah ceritanya ketemu dan belum ditandai dibaca
   if (story && !story.dibaca) {
     story.dibaca = true;
     alert(`Cerita "${story.judul}" ditandai sudah dibaca.`);
@@ -384,20 +415,15 @@ function addRead(id) {
 }
 
 // FUNCTION ADDNOTE
-// buat tambahin catatan pribadi
+// BUAT TAMBAHIN CATATAN PRIBADI
 function addNote(id, isiCatatan) {
-    
-  notes[id] = isiCatatan; // simpan catatan di object notes dengan key = id cerita
+  notes[id] = isiCatatan;                               // simpan catatan di object notes dengan key = id cerita
   localStorage.setItem("notes", JSON.stringify(notes)); // update localStorage biar catatan gak hilang pas refresh
 }
 
 // CATATAN PRIBADI (HALAMAN KHUSUS)
 function renderNotes() {
-
-  // ambil elemen HTML yang punya id="ceritaContainer"
-  const container = document.getElementById("ceritaContainer");
-  
-  // ganti isi container mjd judul catatan
+  const container = document.getElementById("ceritaContainer"); // ambil elemen HTML yang punya id="ceritaContainer"
   container.innerHTML = "";                 
 
   // kalo belum ada catatan yang disimpan
@@ -424,14 +450,17 @@ function renderNotes() {
   });
 }
 
+
 // FUNCTION SHOWSTATS
-// untuk menunjukkan statistik 
+// UTK MENUNJUKKAN STATISTIK
 function showStats() {
+  // hitung total2
   const fav = favorites.length;
   const saved = bookmarks.length;
   const read = stories.filter(s => s.dibaca).length;
 
   const container = document.getElementById("ceritaContainer");
+  // tampilkan hasil statistik dalam bentuk kartu
   container.innerHTML = `
   <div class="stats-wrapper">
     <div class="stats-container">
@@ -445,58 +474,67 @@ function showStats() {
 
 
 // RECYCLE BIN
+// UNTUK NAMPILIN CERITA YANG SUDAH DIHAPUS (TEMPAT PENYIMPANAN SEMENTARA)
 function showRecycleBin() {
-
-  // smbil elemen utama tempat semua isi halaman ditampilkan
+  // ambil container utama dan kosongin dulu
   const container = document.getElementById("ceritaContainer");
-
-  // ubah judul/headernya jadi Recycle Bin 
   container.innerHTML = "";
 
-  // kalau array deletedStories kosong berarti belum ada cerita yang dihapus
+  // kalau belum ada cerita yang dihapus
   if (deletedStories.length === 0) {
-    container.innerHTML += `<p class="empty-message">Tidak ada cerita.</p>`;
+    container.innerHTML = `<p class="empty-message">Tidak ada cerita.</p>`;
     return;
   }
 
-  // loop setiap cerita di array deletedStories
+  // buat container recycle bin
+  const recycleContainer = document.createElement("div");
+  recycleContainer.classList.add("recycle-container");
+
+  // looping semua cerita yang dihapus
   deletedStories.forEach(story => {
-    const card = document.createElement("article"); // buat elemen HTML baru (<article>)
-    card.classList.add("cerita-card");              // kasih class cerita-card
-    
-    // isi cardnya
+    const card = document.createElement("div");
+    card.classList.add("recycle-card");
+
+    // isi card
     card.innerHTML = `
-      <img src="${story.gambar}" alt="${story.judul}">
-      <h3>${story.judul}</h3>
-      <p><strong>Daerah:</strong> ${story.daerah}</p>
+      <div class="card-top">
+        <img src="${story.gambar}" alt="${story.judul}">
+        <div class="card-info">
+          <h3>${story.judul}</h3>
+          <p><strong>Daerah:</strong> ${story.daerah}</p>
+        </div>
+      </div>
       <div class="card-buttons">
         <button onclick="restoreStory(${story.id})">Pulihkan</button>
         <button onclick="deleteForever(${story.id})">Hapus Permanen</button>
       </div>
     `;
-
-    // tambahkan card ke halaman
-    container.appendChild(card);
+    recycleContainer.appendChild(card); // tambahkan card ke recycle container 
   });
+  container.appendChild(recycleContainer); // tampilkan recycle container di halaman
 }
 
+
 // FUNCTION RESTORESTORY
-// buat restore cerita yang di recycle bin
+// BUAT RESTORE CERITA YANG ADA DI RECYCLE BIN
 function restoreStory(id) {
   const story = deletedStories.find(s => s.id === id); // cari cerita berdasarkan id
   
   // kalau ketemu
   if (story) {
-    stories.push(story);                                                    // tambahin lagi ceritanya ke halaman utama
-    deletedStories = deletedStories.filter(s => s.id !== id);               // hapus dari recycle bin
+    stories.push(story); // tambahin lagi ceritanya ke halaman utama
+    deletedStories = deletedStories.filter(s => s.id !== id);  
+
+    localStorage.setItem("stories", JSON.stringify(stories));               // hapus dari recycle bin
     localStorage.setItem("deletedStories", JSON.stringify(deletedStories)); // update localStorage
-    renderStories(stories);                                                 // render ulang daftar cerita
-    alert(`Cerita "${story.judul}" berhasil dipulihkan!`);                  // kasih alert
+    
+    renderStories(stories);                                // render ulang daftar cerita
+    alert(`Cerita "${story.judul}" berhasil dipulihkan!`); // kasih alert
   }
 }
 
 // FUNCTION DELETEFOREVER
-// buat hapus cerita dari recycle bin secara permanen
+// BUAT HAPUS CERITA DARI RECYCLE BIN SECARA PERMANEN
 function deleteForever(id) {
   if (confirm("Apakah Anda yakin ingin menghapus cerita ini secara permanen?")) { // dialog konfirmasi
     deletedStories = deletedStories.filter(s => s.id !== id);                     // buang cerita dengan ID itu
@@ -505,8 +543,9 @@ function deleteForever(id) {
   }
 }
 
+
 // NAVIGATION BAR 
-// buat atur navigasi halaman di sidebar (home, favorit, catatan, dll)
+// BUAT ATUR NAVIGASI HALAMAN DI SIDEBAR (HOME, FAVORIT, CATATAN, DLL)
 
 // ambil semua elemen <li> di dalam .navigation-links (menu navigasi), lalu looping
 document.querySelectorAll(".navigation-links li").forEach(li => {
@@ -517,19 +556,18 @@ document.querySelectorAll(".navigation-links li").forEach(li => {
     document.querySelectorAll(".navigation-links li").forEach(x => x.classList.remove("active")); // hapus class active dari semua menu biar gak ke double
     
     li.classList.add("active");         // kasih class active ke menu yang baru diklik
-
     const section = li.dataset.section; // ambil nilai dari atribut data-section
     
     localStorage.setItem("lastSection", section); // simpan halaman terakhir di localStorage
-
-    showSection(section);               // tampilin halaman sesuai section yang diklik
+    showSection(section);                         // tampilin halaman sesuai section yang diklik
   });
 });
 
+
 // FUNCTION SHOWSECTION
-// nentuin halaman mana yang ditampilkan berdasarkan menu yang diklik
+// NENTUIN HALAMAN MANA YANG MAU DITAMPILIN BERDASARKAN MENU YANG DIKLIK USER
 function showSection(section) {
-  const btnTambah = document.getElementById("btnTambahCerita");
+  const btnTambah = document.getElementById("btnTambahCerita"); // ambil tombol tambah cerita buat nanti dihilangin
 
   switch (section) {
     case "home":
@@ -582,12 +620,11 @@ function showSection(section) {
 }
 
 // INISIALISASI
-// fungsi ini jalan otomatis waktu halaman pertama kali dibuka
+// FUNGSI INI JALAN OTOMATIS WAKTU HALAMAN PERTAMA KALI DIBUKA
 window.onload = () => {
   loadStories(); // load data cerita dari file JSON
 
-  // ambil halaman terakhir yang tersimpan
-  const lastSection = localStorage.getItem("lastSection");
+  const lastSection = localStorage.getItem("lastSection"); // ambil halaman terakhir yang tersimpan
 
   // kalau ada halaman terakhir tampilkan itu
   if (lastSection) {
@@ -596,8 +633,7 @@ window.onload = () => {
     });
     showSection(lastSection);
   } else {
-    // kalau belum ada default ke home
-    showSection("home");
+    showSection("home"); // kalau belum ada default ke home
   }
 
 };

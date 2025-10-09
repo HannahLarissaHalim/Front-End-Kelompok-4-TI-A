@@ -319,6 +319,53 @@ header {
   font-family: sans-serif;
 }
 
+/* layout modal */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;                  
+  padding-right: 4px;         
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  box-sizing: border-box;    
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(82, 61, 45, 0.3);
+  font-size: 0.95rem;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #523D2D;
+  box-shadow: 0 0 5px rgba(82, 61, 45, 0.2);
+}
+
+.modal-content button[type="submit"],
+#submitCatatan {
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;                
+  transition: background 0.3s;
+  box-sizing: border-box;
+}
+
+.modal-content button[type="submit"]:hover,
+#submitCatatan:hover {
+  background-color: #6A5040;
+  transform: translateY(-2px);
+}
+
 /* judul di dalam modal */
 .modal-content h3 {
   margin-top: 0;
@@ -386,6 +433,57 @@ header {
 #submitCerita:hover {
   background-color: #6A5040;
 }
+
+/* modal tambah catatan */
+#modalCatatan .modal-content {
+  background: #F4EFE6;
+  border-radius: 14px;
+  padding: 25px 30px;            
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  border: 2px solid rgba(82, 61, 45, 0.2);
+  color: #523D2D;
+  font-family: sans-serif;
+}
+
+#modalCatatan .modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  color: #523D2D;
+  text-align: center;
+  font-weight: 700;
+}
+
+#modalCatatan #closeModalCatatan {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6A5040;
+}
+
+#modalCatatan #closeModalCatatan:hover {
+  color: #2F241B;
+}
+
+#modalCatatan #submitCatatan {
+  margin-top: 18px;
+  background-color: #523D2D;
+  color: #F4EFE6;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+#modalCatatan #submitCatatan:hover {
+  background-color: #6A5040;
+}
+
 
 /* mode baca cerita */
 .fullscreen-mode {
